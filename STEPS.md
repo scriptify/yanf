@@ -1,0 +1,25 @@
+- ~~Make framework an independent module~~
+- ~~Make it configurable via config file or object~~
+- ~~Autodiscover app loops~~
+    - They configure themselves
+- ~~Create plugin system~~
+    - with all important framework parts as default plugins
+    - implement hooks for plugins
+        - onBeforeInitialize
+        - onInitialized
+    - provide all constants in a single object (remember to insert ALL error constants)
+- Route validation (based on schemas)
+    - Agree on a schema DSL (e.g. JSON schema)
+        - requirements:
+            - Support custom meta fields which can be used by middlewares (e.g. visibleForUserGroup, exclude, ...)
+            - Convertable (directly or indirectly) to mongoose schemas
+            - Convertable (directly or indirectly) to GraphQL schemas
+    - Middlewares for validation
+- Make user model extendable
+- Provide simple e-mail template fillable with content
+- ~~Static lang files should be provided dynamically~~
+- ~~Create working test~~
+- Use ESM everywhere
+- Make it a monorepo
+- Try to integrate it into the REAL backend
+- Frontend bindings
