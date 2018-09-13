@@ -1,11 +1,11 @@
-const { sendJSON } = require('../../../../yanf-core/util/app');
+import yanf from '../../../../yanf-core';
 
-const { create } = require('../../models/IntlWord');
+const { sendJSON } = require('../../../../yanf-core/util/app');
 
 async function createWordHandler(req, res) {
   const data = req.params;
 
-  const newWord = await create(data);
+  const newWord = await yanf.model('IntlWord').create(data);
 
   sendJSON({
     body: { success: true, word: newWord },

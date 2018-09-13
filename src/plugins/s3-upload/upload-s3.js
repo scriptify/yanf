@@ -1,7 +1,8 @@
+import yanf from '../../yanf-core';
+
 const AWS = require('aws-sdk');
 
 const { getConfigValue } = require('../../yanf-core/util/app');
-const { create: createDbFileObject } = require('./models/File');
 
 export function uploadToS3({
   buffer,
@@ -35,7 +36,7 @@ export function uploadToS3({
         }
         const url = data.Location;
         // Save as file object in db, to keep tracks of files on S3
-        const { _id } = await createDbFileObject({ url, name: originalName });
+        const { _id } = await yanf.model('File').create({ url, name: originalName });
 
         resolve({ _id, url, name: originalName });
       });

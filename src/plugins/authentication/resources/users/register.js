@@ -1,11 +1,12 @@
+import yanf from '../../../../yanf-core';
+
 const { sendJSON } = require('../../../../yanf-core/util/app');
 
 const { getJWT } = require('../../setup-passport');
-const { register: registerUser } = require('../../models/User');
 
 async function register(req, res) {
   const data = req.params;
-  const newUser = await registerUser(data);
+  const newUser = await yanf.model('User').register(data);
   // Return also user
   const {
     _doc: {

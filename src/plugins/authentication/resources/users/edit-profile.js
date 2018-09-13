@@ -1,7 +1,6 @@
+const yanf = require('../../../../yanf-core');
 const { sendJSON } = require('../../../../yanf-core/util/app');
 const { getDefinedPropertiesFromObject } = require('../../../../yanf-core/util/general');
-
-const { edit, get } = require('../../models/User');
 
 async function editProfile(req, res) {
   const fieldToTransmit = [
@@ -28,10 +27,10 @@ async function editProfile(req, res) {
   });
 
   const { _id: userId } = req.user;
-  await edit(userId, objToTransmit);
+  await yanf.model('User').edit(userId, objToTransmit);
 
   sendJSON({
-    body: { success: true, user: await get(userId) },
+    body: { success: true, user: await yanf.model('User').get(userId) },
     res
   });
 }

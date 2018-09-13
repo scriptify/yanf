@@ -1,16 +1,15 @@
 import autopopulate from 'mongoose-autopopulate';
 import mongoose from 'mongoose';
-import phone from 'phone';
-import { getConstants } from '../../../yanf-core';
+import yanf from '../../../yanf-core';
 
-const { validateEmail, validatePhoneNumber } = require('../../../yanf-core/util/general');
+const { regex } = require('../../../yanf-core/util/general');
 const { getConfigValue } = require('../../../yanf-core/util/app');
 
 const languages = getConfigValue({ pluginName: 'intl', path: 'availableLanguages' });
 
 const {
   INVALID_EMAIL, TOO_MANY_CHARACTERS, TOO_FEW_CHARACTERS, REQUIRED, INVALID_PHONENR
-} = getConstants();
+} = yanf.getConstants();
 
 const commonForNames = {
   type: String,
@@ -24,14 +23,12 @@ const commonForAddress = {
   maxlength: [255, TOO_MANY_CHARACTERS]
 };
 
-const validPhoneNrCountries = languages ? languages.map(lang => lang.iso.toUpperCase()) : undefined;
-
 const UserSchema = mongoose.Schema({
   mainEmail: {
     type: String,
     trim: true,
     lowercase: true,
-    validate: [validateEmail, INVALID_EMAIL],
+    match: [regex.email, INVALID_EMAIL],
     unique: true, // Used for indexing
     required: REQUIRED,
   },
@@ -39,7 +36,7 @@ const UserSchema = mongoose.Schema({
     type: String,
     trim: true,
     lowercase: true,
-    validate: [validateEmail, INVALID_EMAIL],
+    validate: [regex.email, INVALID_EMAIL],
   }],
   passwordHash: { // Argon2 password hash
     type: String,
@@ -49,8 +46,8 @@ const UserSchema = mongoose.Schema({
   lastName: commonForNames,
   phoneNr: {
     type: String,
-    validate: [
-      nr => validatePhoneNumber({ number: nr, countries: validPhoneNrCountries }),
+    match: [
+      regex.phone,
       INVALID_PHONENR,
     ],
   },
@@ -106,15 +103,6 @@ const UserSchema = mongoose.Schema({
   }
 });
 
-UserSchema.virtual('formattedPhoneNr').get(function getValidPhoneNrFromCountries() {
-  // Get first valid phoneNr according to the valid countries
-  const nrs = validPhoneNrCountries.map(
-    country => phone(this.phoneNr, country)
-  ).find(el => el.length > 0);
-  if (!nrs) return '';
-  return nrs[0];
-});
-
 UserSchema.plugin(autopopulate);
 
-module.exports = UserSchema;
+export default UserSchema;

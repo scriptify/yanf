@@ -9,8 +9,8 @@ module.exports = {
   },
   mongo: {
     connectionUri: {
-      dev: '',
-      prod: ''
+      dev: 'mongodb://app:yanfcouldbecool2018@ds249992.mlab.com:49992/yanf-test',
+      prod: 'mongodb://app:yanfcouldbecool2018@ds249992.mlab.com:49992/yanf-test'
     }
   },
   port: {
@@ -20,6 +20,8 @@ module.exports = {
   paths: {
     resources: path.join(__dirname, './resources'),
     middleware: path.join(__dirname, './middleware'),
+    schemas: path.join(__dirname, './schemas'),
+    models: path.join(__dirname, './models'),
     loops: path.join(__dirname, './loops')
   },
   cors: true,
@@ -72,18 +74,21 @@ module.exports = {
       ]
     },
     authentication: {
+      extendModel: {},
       passwordRecovery: {
         timeout: 5, // Specified in hours
         key: '2CRHvMh4mz2gKXwY5K6u8FZUQFybeX' // Changing this will invalidate all password recovery keys
       },
+      defaultPublicFields: ['_id', 'firstName', 'lastName', 'profilePicture'],
       userGroups: {
         groups: [
           {
-            name: 'RC'
+            name: 'RC',
           },
           {
             name: 'RE',
-            inherits: 'RC'
+            inherits: 'RC',
+            include: ['phoneNr']
           },
           {
             name: 'ADM',

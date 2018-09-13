@@ -12,4 +12,4 @@ const VerificationToken = mongoose.Schema({
   }
 });
 
-module.exports = VerificationToken;
+export default VerificationToken;

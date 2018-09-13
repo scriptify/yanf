@@ -7,29 +7,8 @@ import path from 'path';
 import restify from 'restify';
 import corsMiddleware from 'restify-cors-middleware';
 
-const defaultPlugins = [
-  '../plugins/authentication',
-  '../plugins/error-constants',
-  '../plugins/intl',
-  '../plugins/s3-upload'
-];
-
-export const appData = {
-  constants: null,
-  config: null
-};
-
-export function getConfig() {
-  if (!appData.config)
-    throw new Error('You need to first initialize the application before accessing the config.');
-  return appData.config;
-}
-
-export function getConstants() {
-  if (!appData.constants)
-    throw new Error('You need to first initialize the application before accessing the constants.');
-  return appData.constants;
-}
+import mongoose from 'mongoose';
+import setupMongooseJSONSchema from 'mongoose-schema-jsonschema';
 
 process.on('uncaughtException', (err) => {
   console.error('Uncaught exception: ', err);
@@ -39,112 +18,182 @@ process.on('unhandledRejection', (reason, p) => {
   console.error('Unhandled rejection: ', reason, p);
 });
 
-export default async function startApp({ configPath, ...config }) {
-  const { setupAppLoops, setupResources, addMiddleware } = require('./framework');
-  const { default: createConfig } = require('./util/config');
+class YanfApp {
+  static defaultPlugins = [
+    '../plugins/authentication',
+    '../plugins/error-constants',
+    '../plugins/intl',
+    '../plugins/s3-upload'
+  ];
 
-  const { connectToDb } = require('./util/db');
+  config;
+  constants;
+  models = {};
+  app;
 
-  // Correctly setup app config
-  appData.config = config;
-  if (configPath)
-    appData.config = require(configPath);
-
-  appData.config = createConfig(appData.config);
-
-  // Add folder aliases
-  if (appData.config.aliases)
-    moduleAlias.addAliases(appData.config.aliases);
-
-  await connectToDb(appData.config.mongo.connectionUri);
-
-  const app = restify.createServer();
-
-  if (appData.config.cors === undefined || appData.config.cors === true) {
-    // Enable CORS
-    const cors = corsMiddleware({
-      origins: ['*'],
-      allowHeaders: ['Access-Control-Allow-Origin', 'Authorization']
-    });
-    app.pre(cors.preflight);
-    app.use(cors.actual);
+  getConfig() {
+    if (!this.config)
+      throw new Error('You need to first initialize the application before accessing the config.');
+    return this.config;
   }
 
+  getConstants() {
+    if (!this.constants)
+      throw new Error('You need to first initialize the application before accessing the constants.');
+    return this.constants;
+  }
 
-  // Enable Posted JSON data
-  app.use(restify.plugins.bodyParser({ mapParams: true }));
+  model(name) {
+    // Get an app model
+    return this.models[name];
+  }
 
-  // Setup plugins here
-  const pluginsToUse = appData.config.includes && Array.isArray(appData.config.includes) ?
-    defaultPlugins.concat(appData.config.includes) :
-    defaultPlugins;
+  async startApp({ configPath, ...config }) {
+    const {
+      setupAppLoops, setupResources, addMiddleware, createModels
+    } = require('./framework');
+    const { default: createConfig } = require('./util/config');
 
-  const allPlugins = pluginsToUse.map((pluginPath) => {
-    const plugin = require(pluginPath);
-    if (!plugin) {
-      console.warn(`Plugin '${pluginPath}' was not found and is hence not used.`);
-      return null;
+    const { connectToDb } = require('./util/db');
+
+    // Setup mongoose json schema support
+    setupMongooseJSONSchema(mongoose);
+
+    // Correctly setup app config
+    this.config = config;
+    if (configPath)
+      this.config = require(configPath);
+
+    this.config = createConfig(this.config);
+
+    // Add folder aliases
+    if (this.config.aliases)
+      moduleAlias.addAliases(this.config.aliases);
+
+    await connectToDb(this.config.mongo.connectionUri);
+
+    // Setup app models
+    if (this.config.paths.models && this.config.paths.schemas) {
+      const models = await createModels({
+        schemasPath: this.config.paths.schemas,
+        modelsPath: this.config.paths.models
+      });
+      models.forEach((model) => {
+        this.models[model.name] = model;
+      });
     }
-    return plugin.default;
-  }).filter(p => p);
 
-  // Set all constants first
-  const allConstantsPlugins = allPlugins.map(plugin => plugin.constants).filter(c => c);
-  allConstantsPlugins.forEach((constants) => {
-    appData.constants = {
-      ...appData.constants,
-      ...constants
-    };
-  });
+    const app = restify.createServer();
 
-  // Then add all middlewares
-  const allMiddlewarePlugins = allPlugins.map(plugin => plugin.middleware).filter(m => m);
-  /* eslint-disable no-restricted-syntax */
-  /* eslint-disable no-await-in-loop */
-  for (const middlewarPlugin of allMiddlewarePlugins) // Needs to be setup sequentally
-    await addMiddleware(middlewarPlugin);
+    if (this.config.cors === undefined || this.config.cors === true) {
+      // Enable CORS
+      const cors = corsMiddleware({
+        origins: ['*'],
+        allowHeaders: ['Access-Control-Allow-Origin', 'Authorization']
+      });
+      app.pre(cors.preflight);
+      app.use(cors.actual);
+    }
 
-  const waitForPluginSetup = allPlugins.map(async (plugin) => {
-    // Also fire according plugin hooks
-    if (plugin.hooks && plugin.hooks.onBeforeInitialize && typeof plugin.hooks.onBeforeInitialize === 'function')
-      plugin.hooks.onBeforeInitialize(app);
-    if (plugin.loops)
-      await setupAppLoops(plugin.loops);
-    if (plugin.resources)
-      await setupResources(plugin.resources, app);
 
-    if (plugin.hooks && plugin.hooks.onInitialized && typeof plugin.hooks.onInitialized === 'function')
-      plugin.hooks.onInitialized(app);
-  });
+    // Enable Posted JSON data
+    app.use(restify.plugins.bodyParser({ mapParams: true }));
 
-  await Promise.all(waitForPluginSetup);
+    // Setup plugins here
+    const pluginsToUse = this.config.includes && Array.isArray(this.config.includes) ?
+      YanfApp.defaultPlugins.concat(this.config.includes) :
+      YanfApp.defaultPlugins;
 
-  // Setup custom resources (most important part ofthe whole application);
-  // app loops are also setup here
-  if (appData.config.paths.middleware)
-    await addMiddleware(appData.config.paths.middleware);
-  if (appData.config.paths.resources)
-    await setupResources(appData.config.paths.resources, app);
-  if (appData.config.paths.loops)
-    await setupAppLoops(appData.config.paths.loops);
+    const allPlugins = pluginsToUse.map((pluginPath) => {
+      const plugin = require(pluginPath);
+      if (!plugin) {
+        console.warn(`Plugin '${pluginPath}' was not found and is hence not used.`);
+        return null;
+      }
+      return plugin.default;
+    }).filter(p => p);
 
-  const { appErrorHandler } = require('./util/error-handling');
-  app.use(appErrorHandler);
+    // Set all constants first
+    const allConstantsPlugins = allPlugins.map(plugin => plugin.constants).filter(c => c);
+    allConstantsPlugins.forEach((constants) => {
+      this.constants = {
+        ...this.constants,
+        ...constants
+      };
+    });
 
-  if (appData.config.serveStatic) {
-    app.get('/*', (req, res, next) => {
-      if (req.url.indexOf('.') === -1)
-        req.url = '/index.html';
+    // Setup all models
+    const schemasAndModels = allPlugins
+      .map(({ schemas, models }) =>
+        schemas && models ? ({ schemas, models }) : null
+      )
+      .filter(sm => sm);
 
-      const handler = restify.plugins.serveStatic({
-        directory: path.resolve(appData.config.serveStatic)
+    const waitForModelsSetup = schemasAndModels
+      .map(async ({
+        schemas: schemasPath, models: modelsPath
+      }) => {
+        const models = await createModels({ schemasPath, modelsPath });
+        models.forEach((model) => {
+          this.models[model.name] = model;
+        });
       });
 
-      handler(req, res, next);
+    await Promise.all(waitForModelsSetup);
+
+    // Then add all middlewares
+    const allMiddlewarePlugins = allPlugins.map(plugin => plugin.middleware).filter(m => m);
+    /* eslint-disable no-restricted-syntax */
+    /* eslint-disable no-await-in-loop */
+    for (const middlewarPlugin of allMiddlewarePlugins) // Needs to be setup sequentally
+      await addMiddleware(middlewarPlugin);
+
+    const waitForPluginSetup = allPlugins.map(async (plugin) => {
+      // Also fire according plugin hooks
+      if (plugin.hooks && plugin.hooks.onBeforeInitialize && typeof plugin.hooks.onBeforeInitialize === 'function')
+        plugin.hooks.onBeforeInitialize(app);
+      if (plugin.loops)
+        await setupAppLoops(plugin.loops);
+      if (plugin.resources)
+        await setupResources(plugin.resources, app);
+
+      if (plugin.hooks && plugin.hooks.onInitialized && typeof plugin.hooks.onInitialized === 'function')
+        plugin.hooks.onInitialized(app);
     });
+
+    await Promise.all(waitForPluginSetup);
+
+    // Setup custom resources (most important part ofthe whole application);
+    // app loops are also setup here
+    if (this.config.paths.middleware)
+      await addMiddleware(this.config.paths.middleware);
+    if (this.config.paths.resources)
+      await setupResources(this.config.paths.resources, app);
+    if (this.config.paths.loops)
+      await setupAppLoops(this.config.paths.loops);
+
+    const { appErrorHandler } = require('./util/error-handling');
+    app.use(appErrorHandler);
+
+    if (this.config.serveStatic) {
+      app.get('/*', (req, res, next) => {
+        if (req.url.indexOf('.') === -1)
+          req.url = '/index.html';
+
+        const handler = restify.plugins.serveStatic({
+          directory: path.resolve(this.config.serveStatic)
+        });
+
+        handler(req, res, next);
+      });
+    }
+
+    app.listen(this.config.port, () => console.log(`Server listening on ${this.config.port}`));
+
+    this.app = app;
   }
-
-  app.listen(appData.config.port, () => console.log(`Server listening on ${appData.config.port}`));
-
-  return app;
 }
+
+const appSingleton = new YanfApp();
+
+export default appSingleton;

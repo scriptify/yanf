@@ -1,24 +1,9 @@
-const phone = require('phone');
 const PasswordValidator = require('password-validator');
 
-/**
- * Looks if an email is valid
- * @param {string} email
- */
-function validateEmail(email) {
-  const re = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-  return re.test(email);
-}
-
-/**
- * Looks if a phone number is valid in one of the specified countries (ISO Country codes)
- * @param {object} param0
- */
-function validatePhoneNumber({ number, countries }) {
-  return countries
-    .map(country => phone(number, country))
-    .filter(result => result.length > 0).length > 0;
-}
+const regex = {
+  email: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+  phone: /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s./0-9]*$/
+};
 
 function isPromise(obj) {
   return obj && obj.then && typeof obj.then === 'function';
@@ -49,8 +34,7 @@ function validatePassword(password) {
 }
 
 module.exports = {
-  validateEmail,
-  validatePhoneNumber,
+  regex,
   isPromise,
   validatePassword,
   getDefinedPropertiesFromObject,

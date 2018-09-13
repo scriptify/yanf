@@ -23,4 +23,4 @@ ForgotPasswordTokenSchema.methods.isStillValid = function isStillValid() {
   return false;
 };
 
-module.exports = ForgotPasswordTokenSchema;
+export default ForgotPasswordTokenSchema;

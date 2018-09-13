@@ -1,4 +1,4 @@
-import { getConstants } from '../../../../yanf-core';
+import yanf from '../../../../yanf-core';
 
 const { sendJSON } = require('../../../../yanf-core/util/app');
 
@@ -7,7 +7,7 @@ const passport = require('passport');
 const { getJWT } = require('../../setup-passport');
 const { errorEventEmitter } = require('../../../../yanf-core/util/error-handling');
 
-const { AUTH_ERROR } = getConstants();
+const { AUTH_ERROR } = yanf.getConstants();
 
 async function login(req, res, next) {
   passport.authenticate('local', (err, user) => {

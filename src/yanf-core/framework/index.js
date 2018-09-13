@@ -6,6 +6,8 @@ import util from 'util';
 import fs from 'fs';
 import path from 'path';
 
+import yanf from '..';
+
 import timeParser from '../util/parse-timerange';
 
 const readdir = util.promisify(fs.readdir);
@@ -18,8 +20,16 @@ function toCamelCase(str) {
   return str.replace(/-([a-z])/g, (m, w) => w.toUpperCase());
 }
 
-function objToArray(obj) {
-  return Object.keys(obj).map(key => ({ ...obj[key], key }));
+function objToArray(obj, { spread = true } = {}) {
+  return Object.keys(obj)
+    .map((key) => {
+      const objToSpread = spread ? obj[key] : {};
+      return {
+        key,
+        ...objToSpread,
+        value: spread ? null : obj[key]
+      };
+    });
 }
 
 function getFileName(absolutePath) {
@@ -136,9 +146,7 @@ export async function addMiddleware(middlewarePath) {
 }
 
 export async function setupResources(resourcePath, app) {
-  const { getConfig } = require('..');
-
-  apiPrefix = getConfig().apiPrefix || 'api';
+  apiPrefix = yanf.getConfig().apiPrefix || 'api';
   const resources = await getResources(resourcePath);
 
   resources.forEach((resource) => {
@@ -169,4 +177,25 @@ export async function setupResources(resourcePath, app) {
         console.warn(`Invalid action type ${actionType} for route ${name}`);
     });
   });
+}
+
+export async function createModels({ schemasPath, modelsPath }) {
+  const models = objToArray(await requireFromDirStructure(modelsPath), { spread: false });
+  const schemas = objToArray(await requireFromDirStructure(schemasPath), { spread: false });
+
+  return models
+    .map(({ key, value: Model }) => {
+      const modelName = getFileName(key);
+      const schema = schemas.find(s => getFileName(s.key) === modelName);
+      if (!schema) {
+        console.warn(`
+          No schema found for model ${key}.
+          This model will be ignored.
+          Fix it by creating a schema with the same name in the schema directory.`
+        );
+        return null;
+      }
+      return new Model({ schema: schema.value, name: modelName });
+    })
+    .filter(m => m); // Filter out falsy values
 }

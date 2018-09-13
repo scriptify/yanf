@@ -1,10 +1,9 @@
+const yanf = require('../../../../yanf-core');
 const { sendJSON } = require('../../../../yanf-core/util/app');
-
-const { deleteUser } = require('../../models/User');
 
 async function deleteUserHandler(req, res) {
   const { _id: userId } = req.user;
-  await deleteUser(userId);
+  await yanf.model('User').delete(userId);
   sendJSON({
     res,
     body: { success: true }

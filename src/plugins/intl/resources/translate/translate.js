@@ -1,4 +1,4 @@
-import { getConstants } from '../../../../yanf-core';
+import yanf from '../../../../yanf-core';
 
 const AWS = require('aws-sdk');
 
@@ -6,7 +6,7 @@ const { getConfigValue } = require('../../../../yanf-core/util/app');
 const { errorEventEmitter } = require('../../../../yanf-core/util/error-handling');
 
 async function translateHandler(req, res) {
-  const { TRANSLATION_ERROR } = getConstants();
+  const { TRANSLATION_ERROR } = yanf.getConstants();
 
   const secretAccessKey = getConfigValue({ pluginName: 'aws', path: 'secretAccessKey', err: 'You need to specify the AWS secret access key!' });
   const accessKeyID = getConfigValue({ pluginName: 'aws', path: 'accessKeyID', err: 'You need to specify the AWS accessKeyID!' });

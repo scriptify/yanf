@@ -1,4 +1,4 @@
-import { getConstants } from '../../../../yanf-core';
+import yanf from '../../../../yanf-core';
 
 const { v4 } = require('uuid');
 
@@ -11,7 +11,7 @@ const { errorEventEmitter } = require('../../../../yanf-core/util/error-handling
 
 const { uploadToS3 } = require('../../upload-s3');
 
-const { UPLOAD_ERROR, FILE_TOO_BIG } = getConstants();
+const { UPLOAD_ERROR, FILE_TOO_BIG } = yanf.getConstants();
 
 const unlinkAsync = promisify(fs.unlink);
 const readFileAsync = promisify(fs.readFile);

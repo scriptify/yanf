@@ -1,57 +1,48 @@
 import notifications from '../../../yanf-core/notifications/index';
-import { getConstants } from '../../../yanf-core';
+import yanf from '../../../yanf-core';
+import YanfModel from '../../../yanf-core/framework/YanfModel';
 
-const mongoose = require('mongoose');
 const { v4 } = require('uuid');
-const { verifyUser, get: getUser } = require('./User');
-
-const VerificationTokenSchema = require('../schemas/VerificationToken');
 
 const { ApiError } = require('../../../yanf-core/util/error-handling');
 
-const { NO_SUCH_TOKEN } = getConstants();
+const { NO_SUCH_TOKEN } = yanf.getConstants();
 
-const VerificationToken = mongoose.model('VerificationToken', VerificationTokenSchema);
+export default class VerificationToken extends YanfModel {
+  async create({ userId }) {
+    // Look if there is already a token for this user
+    const token = await this.Model.findOne({ userId });
 
-async function createToken({ userId }) {
-  // Look if there is already a token for this user
-  const token = await VerificationToken.findOne({ userId });
+    if (token) {
+      // If so, delete it
+      await this.Model.deleteOne({ _id: token._id });
+    }
 
-  if (token) {
-    // If so, delete it
-    await VerificationToken.deleteOne({ _id: token._id });
+    const tokenValue = v4();
+
+    const newToken = new this.Model({
+      userId,
+      value: tokenValue
+    });
+
+    await newToken.save();
+
+    const { mainEmail: email, language: lang } = await yanf.model('User').get(userId, ['mainEmail', 'language']);
+    notifications.emit('verification', { data: { tokenValue, email, lang } });
+
+    return true;
   }
 
-  const tokenValue = v4();
+  async verifyEmail(tokenValue) {
+    const token = await this.Model.findOne({ value: tokenValue });
+    if (!token)
+      throw new ApiError({ name: NO_SUCH_TOKEN });
 
-  const newToken = new VerificationToken({
-    userId,
-    value: tokenValue
-  });
 
-  await newToken.save();
+    const { userId } = token;
+    await yanf.model('User').verifyUser(userId);
 
-  const { mainEmail: email, language: lang } = await getUser(userId, ['mainEmail', 'language']);
-  notifications.emit('verification', { data: { tokenValue, email, lang } });
-
-  return true;
+    // Delete token
+    await this.Model.deleteOne({ _id: token._id });
+  }
 }
-
-async function verifyEmail(tokenValue) {
-  const token = await VerificationToken.findOne({ value: tokenValue });
-  if (!token)
-    throw new ApiError({ name: NO_SUCH_TOKEN });
-
-
-  const { userId } = token;
-  await verifyUser(userId);
-
-  // Delete token
-  await VerificationToken.deleteOne({ _id: token._id });
-}
-
-module.exports = {
-  VerificationToken,
-  createToken,
-  verifyEmail
-};

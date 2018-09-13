@@ -8,14 +8,13 @@
         - onBeforeInitialize
         - onInitialized
     - provide all constants in a single object (remember to insert ALL error constants)
-- Route validation (based on schemas)
-    - Agree on a schema DSL (e.g. JSON schema)
-        - requirements:
-            - Support custom meta fields which can be used by middlewares (e.g. visibleForUserGroup, exclude, ...)
-            - Convertable (directly or indirectly) to mongoose schemas
-            - Convertable (directly or indirectly) to GraphQL schemas
-    - Middlewares for validation
-- Make user model extendable
+
+
+- ~~All plugins should be a "YanfModel"~~
+- ~~Create central ModelRegistry~~
+- ~~Routes should use the ModelRegistry~~
+- ~~Make user model extendable~~
+- Refactor notification system
 - Provide simple e-mail template fillable with content
 - ~~Static lang files should be provided dynamically~~
 - ~~Create working test~~

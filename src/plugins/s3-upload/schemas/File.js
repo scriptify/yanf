@@ -1,8 +1,8 @@
-import { getConstants } from '../../../yanf-core';
+import yanf from '../../../yanf-core';
 
 const mongoose = require('mongoose');
 
-const { REQUIRED } = getConstants();
+const { REQUIRED } = yanf.getConstants();
 
 const File = mongoose.Schema({
   url: {
@@ -15,4 +15,4 @@ const File = mongoose.Schema({
   }
 });
 
-module.exports = File;
+export default File;

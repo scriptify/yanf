@@ -1,11 +1,11 @@
-import { getConstants } from '..';
+import yanf from '..';
 
 const { sendJSON } = require('../util/app');
 const { EventEmitter } = require('events');
 
 const { isPromise } = require('./general');
 
-const { VALIDATION_ERROR, UNKNOWN_ERROR, ALREADY_EXISTS } = getConstants();
+const { VALIDATION_ERROR, UNKNOWN_ERROR, ALREADY_EXISTS } = yanf.getConstants();
 
 function routeErrorHandler(routeHandler) {
   // Made for express

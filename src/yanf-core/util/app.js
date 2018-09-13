@@ -1,4 +1,4 @@
-import { getConfig } from '..';
+import yanf from '..';
 
 function sendJSON({ res, code = 200, body }) {
   return res.json(code, body);
@@ -26,7 +26,7 @@ function getObjValue({ obj, path, err }) {
 function getConfigValue({ pluginName, path, err }) {
   // Extract a config value from the config object for a specific plugin
   // If the value is not found, an error is thrown
-  const config = getConfig();
+  const config = yanf.getConfig();
   const plugin = config.plugins[pluginName];
   return getObjValue({ obj: plugin, path, err });
 }

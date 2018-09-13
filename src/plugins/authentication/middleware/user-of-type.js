@@ -1,5 +1,5 @@
 import { getConfigValue } from '../../../yanf-core/util/app';
-import { getConstants } from '../../../yanf-core';
+import yanf from '../../../yanf-core';
 
 const { errorEventEmitter } = require('../../../yanf-core/util/error-handling');
 
@@ -23,7 +23,7 @@ function createRequireUserTypeMiddleware(userType) {
   const userGroups = getConfigValue({ pluginName: 'authentication', path: 'userGroups.groups', err });
   const field = getConfigValue({ pluginName: 'authentication', path: 'userGroups.field', err });
 
-  const { WRONG_USER_TYPE } = getConstants();
+  const { WRONG_USER_TYPE } = yanf.getConstants();
 
   return function requireUserType(req, res, next) {
     const group = userGroups.find(g => g.name === req.user[field]);

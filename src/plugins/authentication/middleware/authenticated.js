@@ -1,10 +1,10 @@
-import { getConstants } from '../../../yanf-core';
+import yanf from '../../../yanf-core';
 
 const passport = require('passport');
 const { errorEventEmitter } = require('../../../yanf-core/util/error-handling');
 
 function requireAuthentication({ doNotFail = false } = {}) {
-  const { AUTH_ERROR } = getConstants();
+  const { AUTH_ERROR } = yanf.getConstants();
   // if  do not fail is true, no error is thrown when user is not logged in
   return function login(req, res, next) {
     passport.authenticate('jwt', { session: false }, (err, user) => {

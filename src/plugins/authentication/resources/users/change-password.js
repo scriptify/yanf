@@ -1,12 +1,10 @@
-import { getConstants } from '../../../../yanf-core';
+import yanf from '../../../../yanf-core';
 
 const { sendJSON } = require('../../../../yanf-core/util/app');
 
-const { changePassword: changeUserPassword } = require('../../models/ForgotPasswordToken');
-
 const { errorEventEmitter } = require('../../../../yanf-core/util/error-handling');
 
-const { NOT_ENOUGH_PARAMETERS } = getConstants();
+const { NOT_ENOUGH_PARAMETERS } = yanf.getConstants();
 
 async function changePassword(req, res) {
   const { token, password } = req.body;
@@ -17,7 +15,7 @@ async function changePassword(req, res) {
     return;
   }
 
-  await changeUserPassword({ token, password });
+  await yanf.model('ForgotPasswordToken').changeUserPassword({ token, password });
   sendJSON({
     body: { success: true },
     res

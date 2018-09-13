@@ -1,7 +1,6 @@
 /* eslint-disable import/no-dynamic-require */
 /* eslint-disable global-require */
-
-const { get: getDbIntlWord } = require('../models/IntlWord');
+import yanf from '../../../yanf-core';
 
 const { getConfigValue } = require('../../../yanf-core/util/app');
 
@@ -29,6 +28,6 @@ module.exports = async function getValue({ key, lang }) {
     data = getValueStatic({ key, lang }); // First look if it is an internal lang constant
 
   if (!data) // If not, it is an intl word saved in the DB by the admins
-    data = await getDbIntlWord({ key, lang });
+    data = await yanf.model('IntlWord').get({ key, lang });
   return data;
 };

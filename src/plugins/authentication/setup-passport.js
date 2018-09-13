@@ -1,13 +1,11 @@
-import { getConstants } from '../../yanf-core';
+import yanf from '../../yanf-core';
 
 const passport = require('passport');
 const { Strategy: LocalStrategy } = require('passport-local');
 const jwt = require('jsonwebtoken');
 const passportJWT = require('passport-jwt');
 
-const { authenticate: authenticateUser, get: findUserById } = require('./models/User');
-
-const { NOT_FOUND } = getConstants();
+const { NOT_FOUND } = yanf.getConstants();
 
 const jwtOptions = {
   jwtFromRequest: passportJWT.ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -21,7 +19,7 @@ function setup(app) {
   const jwtStrategy = new passportJWT.Strategy(jwtOptions, async (payload, next) => {
     // Get user by id:
     const { id } = payload;
-    const user = await findUserById(id);
+    const user = await yanf.model('User').get(id);
     if (user) {
       next(null, user);
       return;
@@ -37,7 +35,7 @@ function setup(app) {
         passwordField: 'password'
       },
       async (email, password, cb) => {
-        const user = await authenticateUser({ email, password });
+        const user = await yanf.model('User').authenticate({ email, password });
         if (!user)
           cb(NOT_FOUND);
         else
@@ -52,7 +50,7 @@ function setup(app) {
   });
 
   passport.deserializeUser(async (id, cb) => {
-    cb(null, (await findUserById(id)));
+    cb(null, (await yanf.model('User').get(id)));
   });
 
   app.use(passport.initialize());

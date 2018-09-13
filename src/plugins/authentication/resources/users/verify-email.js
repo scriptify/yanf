@@ -1,11 +1,10 @@
-import { getConstants } from '../../../../yanf-core';
+import yanf from '../../../../yanf-core';
 
 const { sendJSON } = require('../../../../yanf-core/util/app');
 
-const { verifyEmail: verifyUserEmail } = require('../../models/VerificationToken');
 const { errorEventEmitter } = require('../../../../yanf-core/util/error-handling');
 
-const { NOT_ENOUGH_PARAMETERS } = getConstants();
+const { NOT_ENOUGH_PARAMETERS } = yanf.getConstants();
 
 async function verifyEmail(req, res) {
   const { token } = req.body;
@@ -16,7 +15,7 @@ async function verifyEmail(req, res) {
     return;
   }
 
-  await verifyUserEmail(token);
+  await yanf.model('VerificationToken').verifyEmail(token);
   sendJSON({
     body: { success: true },
     res

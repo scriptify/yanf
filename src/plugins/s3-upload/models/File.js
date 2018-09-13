@@ -1,14 +1,8 @@
-const mongoose = require('mongoose');
+import YanfModel from '../../../yanf-core/framework/YanfModel';
 
-const FileSchema = require('../schemas/File');
-
-const File = mongoose.model('File', FileSchema);
-
-function create({ url, name }) {
-  const newFile = new File({ url, name });
-  return newFile.save();
+export default class File extends YanfModel {
+  create({ url, name }) {
+    const newFile = new this.Model({ url, name });
+    return newFile.save();
+  }
 }
-
-module.exports = {
-  create
-};
