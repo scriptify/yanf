@@ -1,4 +1,4 @@
-const yanf = require('../../../yanf-core');
+const yanf = require('@yanf/core');
 
 module.exports = class IntlWord extends yanf.util.YanfModel {
   async create({ key, languages }) {

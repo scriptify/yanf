@@ -2,7 +2,7 @@ const passport = require('passport');
 const { Strategy: LocalStrategy } = require('passport-local');
 const jwt = require('jsonwebtoken');
 const passportJWT = require('passport-jwt');
-const yanf = require('../../yanf-core');
+const yanf = require('@yanf/core');
 
 const { NOT_FOUND } = yanf.getConstants();
 

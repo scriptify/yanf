@@ -1,4 +1,4 @@
-const yanf = require('../../../yanf-core');
+const yanf = require('@yanf/core');
 
 const userGroupsConfig = yanf.util.getConfigValue({ pluginName: 'authentication', path: 'userGroups' });
 const defaultPublicFields = yanf.util.getConfigValue({ pluginName: 'authentication', path: 'defaultPublicFields' });

@@ -1,4 +1,4 @@
-const yanf = require('../../../../yanf-core');
+const yanf = require('@yanf/core');
 
 const adminUserType = yanf.util.getConfigValue({ pluginName: 'intl', path: 'adminUserType' });
 

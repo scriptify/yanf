@@ -1,4 +1,4 @@
-const yanf = require('../../../../yanf-core');
+const yanf = require('@yanf/core');
 
 async function queryUsersHandler(req, res) {
   const userType = req.user ? req.user.userType : '';

@@ -2,7 +2,7 @@ const { v4 } = require('uuid');
 const fs = require('fs');
 const { promisify } = require('util');
 const sharp = require('sharp');
-const yanf = require('../../../../yanf-core');
+const yanf = require('@yanf/core');
 const { uploadToS3 } = require('../../upload-s3');
 
 const unlinkAsync = promisify(fs.unlink);

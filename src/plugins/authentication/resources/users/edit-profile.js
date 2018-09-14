@@ -1,4 +1,4 @@
-const yanf = require('../../../../yanf-core');
+const yanf = require('@yanf/core');
 
 async function editProfile(req, res) {
   const { _id: userId } = req.user;

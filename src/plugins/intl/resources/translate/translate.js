@@ -1,5 +1,5 @@
 const AWS = require('aws-sdk');
-const yanf = require('../../../../yanf-core');
+const yanf = require('@yanf/core');
 
 async function translateHandler(req, res) {
   const { TRANSLATION_ERROR } = yanf.getConstants();
