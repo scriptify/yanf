@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const ForgotPasswordTokenSchema = mongoose.Schema({
   userId: {
@@ -23,4 +23,4 @@ ForgotPasswordTokenSchema.methods.isStillValid = function isStillValid() {
   return false;
 };
 
-export default ForgotPasswordTokenSchema;
+module.exports = ForgotPasswordTokenSchema;

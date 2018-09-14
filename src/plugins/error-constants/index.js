@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   constants: {
     NOT_FOUND: 'NOT_FOUND',
     WRONG_USER_TYPE: 'WRONG_USER_TYPE',

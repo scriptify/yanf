@@ -1,4 +1,4 @@
-import yanf from '../../../../yanf-core';
+const yanf = require('../../../../yanf-core');
 
 async function isLoggedIn(req, res) {
   if (req.user) {
@@ -20,7 +20,7 @@ async function isLoggedIn(req, res) {
   }
 }
 
-export default {
+module.exports = {
   handlerType: 'ACTION',
   name: 'is-logged-in',
   handler: isLoggedIn,

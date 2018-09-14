@@ -1,8 +1,10 @@
-import { EventEmitter } from 'events';
+/* eslint-disable import/no-dynamic-require */
+/* eslint-disable global-require */
 
-import yanf from '..';
+const { EventEmitter } = require('events');
 
-export function routeErrorHandler(routeHandler) {
+function routeErrorHandler(routeHandler) {
+  const yanf = require('..');
   const { VALIDATION_ERROR, UNKNOWN_ERROR, ALREADY_EXISTS } = yanf.getConstants();
   return async function caughtExpressRoute(req, res, next) {
     try {
@@ -55,7 +57,8 @@ export function routeErrorHandler(routeHandler) {
 }
 
 // eslint-disable-next-line no-unused-vars
-export function appErrorHandler(err, req, res, next) {
+function appErrorHandler(err, req, res, next) {
+  const yanf = require('..');
   const { UNKNOWN_ERROR } = yanf.getConstants();
   yanf.util.sendJSON({
     body: {
@@ -68,11 +71,12 @@ export function appErrorHandler(err, req, res, next) {
   });
 }
 
-export const errorEventEmitter = new EventEmitter();
+const errorEventEmitter = new EventEmitter();
 
 errorEventEmitter.on('error', ({
   type, payload = {}, statusCode, res
 }) => {
+  const yanf = require('..');
   // Errors directly thrown by the api
   yanf.util.sendJSON({
     body: {
@@ -85,7 +89,7 @@ errorEventEmitter.on('error', ({
   });
 });
 
-export class ApiError extends Error {
+class ApiError extends Error {
   constructor({ name, payload = {} }) {
     super(name);
     this.isApiError = true;
@@ -93,3 +97,9 @@ export class ApiError extends Error {
     this.payload = payload;
   }
 }
+
+module.exports = {
+  routeErrorHandler,
+  appErrorHandler,
+  ApiError
+};

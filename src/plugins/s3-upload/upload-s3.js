@@ -1,7 +1,7 @@
-import AWS from 'aws-sdk';
-import yanf from '../../yanf-core';
+const AWS = require('aws-sdk');
+const yanf = require('../../yanf-core');
 
-export function uploadToS3({
+function uploadToS3({
   buffer,
   fileName,
   additionalParams,
@@ -40,3 +40,7 @@ export function uploadToS3({
     });
   });
 }
+
+module.exports = {
+  uploadToS3
+};

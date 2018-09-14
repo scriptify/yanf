@@ -1,4 +1,4 @@
-import { log } from '@shared/util';
+const { log } = require('@shared/util');
 
 function createLoggerMiddleware() {
   return function logger(req, res, next) {
@@ -7,7 +7,7 @@ function createLoggerMiddleware() {
   };
 }
 
-export default {
+module.exports = {
   fn: createLoggerMiddleware
 };
 

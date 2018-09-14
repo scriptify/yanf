@@ -13,8 +13,8 @@ function finalizeConfigValues(config, mode) {
   return retObj;
 }
 
-export default function getConfig(configObj) {
+module.exports = function getConfig(configObj) {
   // Extract config based on production/dev env
   const mode = process.env.ANF_MODE === 'production' ? 'prod' : 'dev';
   return finalizeConfigValues(configObj, mode);
-}
+};

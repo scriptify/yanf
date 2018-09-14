@@ -1,25 +1,25 @@
 /* eslint-disable import/no-dynamic-require */
 /* eslint-disable global-require */
-import moduleAlias from 'module-alias';
+const moduleAlias = require('module-alias');
 
-import path from 'path';
+const path = require('path');
 
-import restify from 'restify';
-import corsMiddleware from 'restify-cors-middleware';
+const restify = require('restify');
+const corsMiddleware = require('restify-cors-middleware');
 
-import mongoose from 'mongoose';
-import setupMongooseJSONSchema from 'mongoose-schema-jsonschema';
+const mongoose = require('mongoose');
+const setupMongooseJSONSchema = require('mongoose-schema-jsonschema');
 
-import * as appUtils from './util/app';
-import * as configUtils from './util/config';
-import * as cryptoUtils from './util/cryptography';
-import * as dbUtils from './util/db';
-import * as errorHandlingUtils from './util/error-handling';
-import * as generalUtils from './util/general';
+const appUtils = require('./util/app');
+const configUtils = require('./util/config');
+const cryptoUtils = require('./util/cryptography');
+const dbUtils = require('./util/db');
+const errorHandlingUtils = require('./util/error-handling');
+const generalUtils = require('./util/general');
 
-import notifications from './notifications';
+const notifications = require('./notifications');
 
-import YanfModel from './framework/YanfModel';
+const YanfModel = require('./framework/YanfModel');
 
 process.on('uncaughtException', (err) => {
   console.error('Uncaught exception: ', err);
@@ -30,27 +30,29 @@ process.on('unhandledRejection', (reason, p) => {
 });
 
 class YanfApp {
-  static defaultPlugins = [
-    '../plugins/authentication',
-    '../plugins/error-constants',
-    '../plugins/intl',
-    '../plugins/s3-upload'
-  ];
+  constructor() {
+    this.defaultPlugins = [
+      '../plugins/authentication',
+      '../plugins/error-constants',
+      '../plugins/intl',
+      '../plugins/s3-upload'
+    ];
 
-  config;
-  constants;
-  models = {};
-  app;
-  util = {
-    ...appUtils,
-    ...configUtils,
-    ...cryptoUtils,
-    ...dbUtils,
-    ...errorHandlingUtils,
-    ...generalUtils,
-    YanfModel
-  };
-  notifications = notifications;
+    this.config = null;
+    this.constants = null;
+    this.models = {};
+    this.app = null;
+    this.util = {
+      ...appUtils,
+      ...configUtils,
+      ...cryptoUtils,
+      ...dbUtils,
+      ...errorHandlingUtils,
+      ...generalUtils,
+      YanfModel
+    };
+    this.notifications = notifications;
+  }
 
   getConfig() {
     if (!this.config)
@@ -73,7 +75,7 @@ class YanfApp {
     const {
       setupAppLoops, setupResources, addMiddleware, createModels
     } = require('./framework');
-    const { default: createConfig } = require('./util/config');
+    const createConfig = require('./util/config');
 
     const { connectToDb } = require('./util/db');
 
@@ -122,8 +124,8 @@ class YanfApp {
 
     // Setup plugins here
     const pluginsToUse = this.config.includes && Array.isArray(this.config.includes) ?
-      YanfApp.defaultPlugins.concat(this.config.includes) :
-      YanfApp.defaultPlugins;
+      this.defaultPlugins.concat(this.config.includes) :
+      this.defaultPlugins;
 
     const allPlugins = pluginsToUse.map((pluginPath) => {
       const plugin = require(pluginPath);
@@ -131,7 +133,7 @@ class YanfApp {
         console.warn(`Plugin '${pluginPath}' was not found and is hence not used.`);
         return null;
       }
-      return plugin.default;
+      return plugin;
     }).filter(p => p);
 
     // Set all constants first
@@ -184,7 +186,7 @@ class YanfApp {
 
     await Promise.all(waitForPluginSetup);
 
-    // Setup custom resources (most important part ofthe whole application);
+    // Setup custom resources (most constant part ofthe whole application);
     // app loops are also setup here
     if (this.config.paths.middleware)
       await addMiddleware(this.config.paths.middleware);
@@ -217,4 +219,4 @@ class YanfApp {
 
 const appSingleton = new YanfApp();
 
-export default appSingleton;
+module.exports = appSingleton;

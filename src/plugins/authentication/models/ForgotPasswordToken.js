@@ -1,6 +1,6 @@
-import { v4 } from 'uuid';
-import crypto from 'crypto';
-import yanf from '../../../yanf-core';
+const { v4 } = require('uuid');
+const crypto = require('crypto');
+const yanf = require('../../../yanf-core');
 
 const { NO_SUCH_USER, NO_SUCH_TOKEN, INVALID_TOKEN } = yanf.getConstants();
 
@@ -8,7 +8,7 @@ function createHashFromToken(token) {
   return crypto.createHmac('sha256', token).digest('hex');
 }
 
-export default class ForgotPasswordToken extends yanf.util.YanfModel {
+module.exports = class ForgotPasswordToken extends yanf.util.YanfModel {
   async generateToken(userMainEmail) {
     const passwordRecoveryTime = yanf.util.getConfigValue({
       pluginName: 'authentication',
@@ -34,7 +34,7 @@ export default class ForgotPasswordToken extends yanf.util.YanfModel {
     const validTill = new Date(Date.now() + (passwordRecoveryTime * 60 * 60 * 1000));
     const tokenValue = v4();
 
-    // Encrypt toke value with key from config
+    // Encrypt toke value with key = require(config
     const hashedToken = createHashFromToken(tokenValue);
 
     const newToken = new this.Model({
@@ -79,4 +79,4 @@ export default class ForgotPasswordToken extends yanf.util.YanfModel {
     // Now delete it
     await this.Model.deleteOne({ _id: tokenFromDb._id });
   }
-}
+};

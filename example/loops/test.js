@@ -2,7 +2,7 @@ function testLoop() {
   console.log('Ho, looping no hard son.');
 }
 
-export default {
+module.exports = {
   fn: testLoop,
   repeat: '20s'
 };

@@ -1,4 +1,4 @@
-import yanf from '../../../yanf-core';
+const yanf = require('../../../yanf-core');
 
 const userGroupsConfig = yanf.util.getConfigValue({ pluginName: 'authentication', path: 'userGroups' });
 const defaultPublicFields = yanf.util.getConfigValue({ pluginName: 'authentication', path: 'defaultPublicFields' });
@@ -30,7 +30,7 @@ function getFieldDescriptor(userType) {
   return `${fields} ${defaultPublicFields ? defaultPublicFields.join(' ') : ''}`;
 }
 
-export default class User extends yanf.util.YanfModel {
+module.exports = class User extends yanf.util.YanfModel {
   constructor({ schema, name }) {
     if (extendUserModel)
       schema.add(extendUserModel);
@@ -48,7 +48,7 @@ export default class User extends yanf.util.YanfModel {
 
   get(id, { userType } = {}) {
     // If userType is null or undefined, it is assumed
-    //  that this is an internal call (not from e.g. REST)
+    //  that this is an internal call (not = require(e.g. REST)
     //  In that case, ALL fields are submitted. Pass an empty string to userType if not so.
     const fields = getFieldDescriptor(userType);
     if (id)
@@ -129,4 +129,4 @@ export default class User extends yanf.util.YanfModel {
   deleteUser(id) {
     return this.Model.findByIdAndRemove(id);
   }
-}
+};

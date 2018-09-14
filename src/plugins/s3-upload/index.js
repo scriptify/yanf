@@ -1,6 +1,6 @@
-import path from 'path';
+const path = require('path');
 
-export default {
+module.exports = {
   name: 's3-upload',
   resources: path.join(__dirname, './resources'),
   middleware: path.join(__dirname, './middleware'),

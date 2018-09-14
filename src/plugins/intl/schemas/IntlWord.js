@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
-import yanf from '../../../yanf-core';
+const mongoose = require('mongoose');
+const yanf = require('../../../yanf-core');
 
 const languages = yanf.util.getConfigValue({ pluginName: 'intl', path: 'availableLanguages' });
 
@@ -26,4 +26,4 @@ const IntlWord = mongoose.Schema({
 
 IntlWord.index({ key: 1 });
 
-export default IntlWord;
+module.exports = IntlWord;

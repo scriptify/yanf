@@ -1,6 +1,6 @@
-import yanf from '../../../../yanf-core';
+const yanf = require('../../../../yanf-core');
 
-import { getJWT } from '../../setup-passport';
+const { getJWT } = require('../../setup-passport');
 
 async function register(req, res) {
   const data = req.params;
@@ -18,7 +18,7 @@ async function register(req, res) {
   });
 }
 
-export default {
+module.exports = {
   handlerType: 'POST',
   handler: register,
   name: 'register'

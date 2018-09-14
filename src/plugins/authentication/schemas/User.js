@@ -1,6 +1,6 @@
-import autopopulate from 'mongoose-autopopulate';
-import mongoose from 'mongoose';
-import yanf from '../../../yanf-core';
+const autopopulate = require('mongoose-autopopulate');
+const mongoose = require('mongoose');
+const yanf = require('../../../yanf-core');
 
 const languages = yanf.util.getConfigValue({ pluginName: 'intl', path: 'availableLanguages' });
 
@@ -102,4 +102,4 @@ const UserSchema = mongoose.Schema({
 
 UserSchema.plugin(autopopulate);
 
-export default UserSchema;
+module.exports = UserSchema;

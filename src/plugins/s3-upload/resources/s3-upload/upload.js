@@ -1,11 +1,9 @@
-import { v4 } from 'uuid';
-import fs from 'fs';
-import { promisify } from 'util';
-import sharp from 'sharp';
-import yanf from '../../../../yanf-core';
-import { uploadToS3 } from '../../upload-s3';
-
-const { UPLOAD_ERROR, FILE_TOO_BIG } = yanf.getConstants();
+const { v4 } = require('uuid');
+const fs = require('fs');
+const { promisify } = require('util');
+const sharp = require('sharp');
+const yanf = require('../../../../yanf-core');
+const { uploadToS3 } = require('../../upload-s3');
 
 const unlinkAsync = promisify(fs.unlink);
 const readFileAsync = promisify(fs.readFile);
@@ -18,6 +16,8 @@ function bToMb(b) {
 }
 
 async function upload(req, res) {
+  const { UPLOAD_ERROR, FILE_TOO_BIG } = yanf.getConstants();
+
   if (!req.files) {
     yanf.util.errorEventEmitter.emit('error', {
       type: UPLOAD_ERROR, statusCode: 400, req, res
@@ -117,7 +117,7 @@ async function upload(req, res) {
   });
 }
 
-export default {
+module.exports = {
   handlerType: 'ACTION',
   name: 'upload',
   handler: upload,

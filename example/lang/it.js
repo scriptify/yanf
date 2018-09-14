@@ -1,3 +1,3 @@
-export default {
+module.exports = {
   CAT_NAME: 'Nome del gatto:'
 };

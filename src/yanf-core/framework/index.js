@@ -2,13 +2,13 @@
 /* eslint-disable global-require */
 /* eslint-disable no-restricted-syntax */
 /* eslint-disable no-await-in-loop */
-import util from 'util';
-import fs from 'fs';
-import path from 'path';
+const util = require('util');
+const fs = require('fs');
+const path = require('path');
 
-import yanf from '..';
+const yanf = require('..');
 
-import timeParser from '../util/parse-timerange';
+const timeParser = require('../util/parse-timerange');
 
 const readdir = util.promisify(fs.readdir);
 const lstat = util.promisify(fs.lstat);
@@ -62,7 +62,7 @@ async function requireFromDirStructure(dir, currObj = {}) {
     if (stat.isFile()) {
       retObj = {
         ...retObj,
-        [currFullPath]: require(currFullPath).default
+        [currFullPath]: require(currFullPath)
       };
     } else
       retObj = await requireFromDirStructure(currFullPath, retObj);
@@ -132,7 +132,7 @@ function createRoute({
   }
 }
 
-export async function setupAppLoops(loopsPath) {
+async function setupAppLoops(loopsPath) {
   if (!loopsPath)
     return;
   const loops = objToArray(await requireFromDirStructure(loopsPath));
@@ -141,11 +141,11 @@ export async function setupAppLoops(loopsPath) {
   });
 }
 
-export async function addMiddleware(middlewarePath) {
+async function addMiddleware(middlewarePath) {
   allMiddlewares = allMiddlewares.concat(await getMiddlewares(middlewarePath));
 }
 
-export async function setupResources(resourcePath, app) {
+async function setupResources(resourcePath, app) {
   apiPrefix = yanf.getConfig().apiPrefix || 'api';
   const resources = await getResources(resourcePath);
 
@@ -179,7 +179,7 @@ export async function setupResources(resourcePath, app) {
   });
 }
 
-export async function createModels({ schemasPath, modelsPath }) {
+async function createModels({ schemasPath, modelsPath }) {
   const models = objToArray(await requireFromDirStructure(modelsPath), { spread: false });
   const schemas = objToArray(await requireFromDirStructure(schemasPath), { spread: false });
 
@@ -199,3 +199,10 @@ export async function createModels({ schemasPath, modelsPath }) {
     })
     .filter(m => m); // Filter out falsy values
 }
+
+module.exports = {
+  setupAppLoops,
+  addMiddleware,
+  setupResources,
+  createModels
+};

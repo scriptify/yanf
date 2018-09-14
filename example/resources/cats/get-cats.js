@@ -11,7 +11,7 @@ async function getCatsHandler(req, res) {
   });
 }
 
-export default {
+module.exports = {
   handlerType: 'GET',
   handler: getCatsHandler,
   urlParams: '/:id',

@@ -4,13 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "cross-env ANF_MODE=development cross-env BABEL_ENV=node nodemon --inspect",
-    "build": "npm run lint && cross-env BABEL_ENV=node babel src/server --out-dir build/server && cross-env BABEL_ENV=node babel src/shared --out-dir build/shared",
+    "dev": "cross-env ANF_MODE=development nodemon --inspect",
     "lint": "eslint example --fix && eslint src --fix",
     "count-lines": "cloc . --exclude-dir=node_modules,.git,build --exclude-ext=json"
   },
   "nodemonConfig": {
-    "exec": "npm run lint && babel-node example/index.js",
+    "exec": "npm run lint && node example/index.js",
     "inspect": true,
     "watch": [
       "example",
@@ -21,13 +20,6 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@babel/cli": "^7.0.0-beta.49",
-    "@babel/core": "^7.0.0-beta.49",
-    "@babel/node": "^7.0.0-beta.49",
-    "@babel/plugin-proposal-class-properties": "^7.0.0",
-    "@babel/plugin-syntax-dynamic-import": "^7.0.0-beta.49",
-    "@babel/preset-env": "^7.0.0-beta.49",
-    "babel-eslint": "^8.2.3",
     "cloc": "^2.3.3",
     "cross-env": "^5.1.6",
     "eslint": "^4.9.0",

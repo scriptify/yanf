@@ -1,10 +1,6 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
-export default class YanfModel {
-  schema;
-  name;
-  Model;
-
+module.exports = class YanfModel {
   constructor({ schema, name }) {
     this.name = name;
     this.schema = schema;
@@ -14,4 +10,4 @@ export default class YanfModel {
   jsonSchema() {
     return this.schema.jsonSchema();
   }
-}
+};

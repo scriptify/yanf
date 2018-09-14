@@ -1,5 +1,5 @@
-import passport from 'passport';
-import yanf from '../../../yanf-core';
+const passport = require('passport');
+const yanf = require('../../../yanf-core');
 
 function createLoginMiddleware({ doNotFail = false } = {}) {
   const { AUTH_ERROR } = yanf.getConstants();
@@ -25,6 +25,6 @@ function createLoginMiddleware({ doNotFail = false } = {}) {
   };
 }
 
-export default {
+module.exports = {
   fn: createLoginMiddleware
 };

@@ -1,6 +1,6 @@
-import path from 'path';
+const path = require('path');
 
-export default {
+module.exports = {
   name: 'intl',
   resources: path.join(__dirname, './resources'),
   models: path.join(__dirname, './models'),

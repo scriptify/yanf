@@ -1,6 +1,6 @@
-import yanf from '../../../yanf-core';
+const yanf = require('../../../yanf-core');
 
-export default class IntlWord extends yanf.util.YanfModel {
+module.exports = class IntlWord extends yanf.util.YanfModel {
   async create({ key, languages }) {
     const existingWord = await this.Model.findOne({ key });
     if (existingWord) {
@@ -34,4 +34,4 @@ export default class IntlWord extends yanf.util.YanfModel {
   find({ text }) {
     return this.Model.find({ languages: { $elemMatch: { value: { $regex: text, $options: 'i' } } } });
   }
-}
+};

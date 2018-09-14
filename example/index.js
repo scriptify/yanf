@@ -1,5 +1,5 @@
-import path from 'path';
-import yanf from '../src/yanf-core';
+const path = require('path');
+const yanf = require('../src/yanf-core');
 
 async function main() {
   await yanf.startApp({ configPath: path.join(__dirname, './config.js') });

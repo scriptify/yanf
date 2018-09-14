@@ -10,7 +10,7 @@ async function editProfile(req, res) {
   });
 }
 
-export default {
+module.exports = {
   handlerType: 'PATCH',
   handler: editProfile,
   name: 'edit-profile',

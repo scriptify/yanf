@@ -1,4 +1,4 @@
-import yanf from '../../../../yanf-core';
+const yanf = require('../../../../yanf-core');
 
 async function queryUsersHandler(req, res) {
   const userType = req.user ? req.user.userType : '';
@@ -11,7 +11,7 @@ async function queryUsersHandler(req, res) {
   });
 }
 
-export default {
+module.exports = {
   handlerType: 'GET',
   handler: queryUsersHandler,
   urlParams: '/:id',

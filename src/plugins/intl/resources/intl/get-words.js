@@ -1,6 +1,6 @@
-import yanf from '../../../../yanf-core';
+const yanf = require('../../../../yanf-core');
 
-import getValue from '../../static-lang';
+const getValue = require('../../static-lang');
 
 async function getWordsHandler(req, res) {
   const { key, lang } = req.params;
@@ -11,7 +11,7 @@ async function getWordsHandler(req, res) {
   });
 }
 
-export default {
+module.exports = {
   handlerType: 'GET',
   name: 'get-words',
   urlParams: '/:key/:lang',

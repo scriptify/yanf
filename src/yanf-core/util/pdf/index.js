@@ -21,7 +21,7 @@ function injectData(html, data) {
   return retHtml;
 }
 
-export default async function createPdfAndUpload({ data, options: { template } }) {
+module.exports = async function createPdfAndUpload({ data, options: { template } }) {
   const pdfOptions = {
     format: 'A4',
     border: {
@@ -53,4 +53,4 @@ export default async function createPdfAndUpload({ data, options: { template } }
       return resolve(fileObj);
     });
   });
-}
+};

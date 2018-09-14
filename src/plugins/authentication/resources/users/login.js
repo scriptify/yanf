@@ -1,7 +1,7 @@
-import passport from 'passport';
-import yanf from '../../../../yanf-core';
+const passport = require('passport');
+const yanf = require('../../../../yanf-core');
 
-import { getJWT } from '../../setup-passport';
+const { getJWT } = require('../../setup-passport');
 
 const { AUTH_ERROR } = yanf.getConstants();
 
@@ -36,7 +36,7 @@ async function login(req, res, next) {
   })(req, res, next);
 }
 
-export default {
+module.exports = {
   handlerType: 'ACTION',
   handler: login,
   name: 'login'

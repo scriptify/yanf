@@ -1,8 +1,8 @@
-/* eslint-disable import/no-dynamic-require */
+/* eslint-disable const/no-dynamic-require */
 /* eslint-disable global-require */
-import path from 'path';
+const path = require('path');
 
-export default {
+module.exports = {
   name: 'authentication',
   resources: path.join(__dirname, './resources'),
   middleware: path.join(__dirname, './middleware'),

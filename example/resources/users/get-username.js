@@ -7,7 +7,7 @@ async function getUsernameHandler(req, res) {
   });
 }
 
-export default {
+module.exports = {
   handlerType: 'ACTION',
   handler: getUsernameHandler,
   name: 'get-username',

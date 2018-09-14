@@ -1,4 +1,4 @@
-import yanf from '../../../yanf-core';
+const yanf = require('../../../yanf-core');
 
 function requireAuthentication() {
   const { AUTH_ERROR } = yanf.getConstants();
@@ -14,6 +14,6 @@ function requireAuthentication() {
   };
 }
 
-export default {
+module.exports = {
   fn: requireAuthentication
 };

@@ -1,4 +1,4 @@
-import yanf from '../../../yanf-core';
+const yanf = require('../../../yanf-core');
 
 const { v4 } = require('uuid');
 
@@ -6,7 +6,7 @@ const { ApiError } = require('../../../yanf-core/util/error-handling');
 
 const { NO_SUCH_TOKEN } = yanf.getConstants();
 
-export default class VerificationToken extends yanf.util.YanfModel {
+module.exports = class VerificationToken extends yanf.util.YanfModel {
   async create({ userId }) {
     // Look if there is already a token for this user
     const token = await this.Model.findOne({ userId });
@@ -43,4 +43,4 @@ export default class VerificationToken extends yanf.util.YanfModel {
     // Delete token
     await this.Model.deleteOne({ _id: token._id });
   }
-}
+};

@@ -1,5 +1,4 @@
-import { getConfigValue } from '../../../yanf-core/util/app';
-import yanf from '../../../yanf-core';
+const yanf = require('../../../yanf-core');
 
 function getUserGroupsOfUserType({ userGroup, userTypes = [], groups }) {
   // If a user is an ADM, she's automatically a RE + RC, so return [RE, RC, ADM]
@@ -18,8 +17,8 @@ function getUserGroupsOfUserType({ userGroup, userTypes = [], groups }) {
 
 function createRequireUserTypeMiddleware(userType) {
   const err = 'Authentication needs to be properly configured to use the "user-of-type" middleware.';
-  const userGroups = getConfigValue({ pluginName: 'authentication', path: 'userGroups.groups', err });
-  const field = getConfigValue({ pluginName: 'authentication', path: 'userGroups.field', err });
+  const userGroups = yanf.util.getConfigValue({ pluginName: 'authentication', path: 'userGroups.groups', err });
+  const field = yanf.util.getConfigValue({ pluginName: 'authentication', path: 'userGroups.field', err });
 
   const { WRONG_USER_TYPE } = yanf.getConstants();
 
@@ -48,6 +47,6 @@ function createRequireUserTypeMiddleware(userType) {
   };
 }
 
-export default {
+module.exports = {
   fn: createRequireUserTypeMiddleware
 };

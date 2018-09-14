@@ -1,4 +1,4 @@
-import yanf from '../../../../yanf-core';
+const yanf = require('../../../../yanf-core');
 
 async function createWordHandler(req, res) {
   const data = req.params;
@@ -11,7 +11,7 @@ async function createWordHandler(req, res) {
   });
 }
 
-export default {
+module.exports = {
   handlerType: 'POST',
   name: 'create-word',
   handler: createWordHandler,

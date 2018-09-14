@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+const mongoose = require('mongoose');
 
 const VerificationToken = mongoose.Schema({
   userId: {
@@ -12,4 +12,4 @@ const VerificationToken = mongoose.Schema({
   }
 });
 
-export default VerificationToken;
+module.exports = VerificationToken;

@@ -1,7 +1,7 @@
-import path from 'path';
-import multer from 'multer';
-import { v4 } from 'uuid';
-import yanf from '../../../yanf-core';
+const path = require('path');
+const multer = require('multer');
+const { v4 } = require('uuid');
+const yanf = require('../../../yanf-core');
 
 const temporaryFilePath = yanf.util.getConfigValue({ pluginName: 's3-upload', path: 'temporaryFilePath', err: 'Specify a path where temporary files should be saved after upload!' });
 
@@ -16,6 +16,6 @@ const uploadMiddleware = multer({
   })
 }); // Default maximum for files is 1MB
 
-export default {
+module.exports = {
   fn: () => uploadMiddleware
 };

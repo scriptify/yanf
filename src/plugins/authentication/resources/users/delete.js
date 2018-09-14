@@ -9,7 +9,7 @@ async function deleteUserHandler(req, res) {
   });
 }
 
-export default {
+module.exports = {
   handlerType: 'DEL',
   handler: deleteUserHandler,
   name: 'delete-user',

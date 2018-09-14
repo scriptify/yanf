@@ -1,4 +1,4 @@
-import yanf from '../../../../yanf-core';
+const yanf = require('../../../../yanf-core');
 
 const { NOT_ENOUGH_PARAMETERS } = yanf.getConstants();
 
@@ -18,7 +18,7 @@ async function verifyEmail(req, res) {
   });
 }
 
-export default {
+module.exports = {
   handlerType: 'ACTION',
   name: 'verify-email',
   handler: verifyEmail

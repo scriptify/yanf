@@ -1,5 +1,5 @@
-import AWS from 'aws-sdk';
-import yanf from '../../../../yanf-core';
+const AWS = require('aws-sdk');
+const yanf = require('../../../../yanf-core');
 
 async function translateHandler(req, res) {
   const { TRANSLATION_ERROR } = yanf.getConstants();
@@ -33,7 +33,7 @@ async function translateHandler(req, res) {
   });
 }
 
-export default {
+module.exports = {
   handlerType: 'ACTION',
   name: 'translate',
   handler: translateHandler,
