@@ -1,15 +1,8 @@
 import yanf from '../../../yanf-core';
-import YanfModel from '../../../yanf-core/framework/YanfModel';
 
-const { hashPassword, verifyPassword } = require('../../../yanf-core/util/cryptography');
-const { ApiError } = require('../../../yanf-core/util/error-handling');
-const { validatePassword } = require('../../../yanf-core/util/general');
-
-const { getConfigValue } = require('../../../yanf-core/util/app');
-
-const userGroupsConfig = getConfigValue({ pluginName: 'authentication', path: 'userGroups' });
-const defaultPublicFields = getConfigValue({ pluginName: 'authentication', path: 'defaultPublicFields' });
-const extendUserModel = getConfigValue({ pluginName: 'authentication', path: 'extendModel' });
+const userGroupsConfig = yanf.util.getConfigValue({ pluginName: 'authentication', path: 'userGroups' });
+const defaultPublicFields = yanf.util.getConfigValue({ pluginName: 'authentication', path: 'defaultPublicFields' });
+const extendUserModel = yanf.util.getConfigValue({ pluginName: 'authentication', path: 'extendModel' });
 
 const { PASSWORD_TOO_WEAK, NO_SUCH_USER } = yanf.getConstants();
 
@@ -37,7 +30,7 @@ function getFieldDescriptor(userType) {
   return `${fields} ${defaultPublicFields ? defaultPublicFields.join(' ') : ''}`;
 }
 
-export default class User extends YanfModel {
+export default class User extends yanf.util.YanfModel {
   constructor({ schema, name }) {
     if (extendUserModel)
       schema.add(extendUserModel);
@@ -67,12 +60,12 @@ export default class User extends YanfModel {
   async register(data) {
     const { password, birthday, ...restData } = data;
 
-    if (!validatePassword(password)) {
+    if (!yanf.util.validatePassword(password)) {
       // Password too weak
-      throw new ApiError({ name: PASSWORD_TOO_WEAK });
+      throw new yanf.util.ApiError({ name: PASSWORD_TOO_WEAK });
     }
 
-    const passwordHash = await hashPassword(password);
+    const passwordHash = await yanf.util.hashPassword(password);
 
     const newUserData = {
       ...restData,
@@ -89,8 +82,9 @@ export default class User extends YanfModel {
   }
 
   async edit(userId, editedFields) {
+    const { passwordHash, mainEmail, ...fieldsToEdit } = editedFields;
     const updatedUser = await this.Model.findByIdAndUpdate(
-      userId, { $set: editedFields }, { new: true, runValidators: true }
+      userId, { $set: fieldsToEdit }, { new: true, runValidators: true }
     );
 
     return updatedUser;
@@ -106,20 +100,20 @@ export default class User extends YanfModel {
       // TODO: Throw error!
       return false;
     }
-    return (await verifyPassword({ hash: user.passwordHash, password })) ? user : null;
+    return (await yanf.util.verifyPassword({ hash: user.passwordHash, password })) ? user : null;
   }
 
   async changePassword({ id, password }) {
     const user = await this.Model.findById(id);
     if (!user)
-      throw new ApiError({ name: NO_SUCH_USER });
+      throw new yanf.util.ApiError({ name: NO_SUCH_USER });
 
-    if (!validatePassword(password)) {
+    if (!yanf.util.validatePassword(password)) {
       // Password too weak
-      throw new ApiError({ name: PASSWORD_TOO_WEAK });
+      throw new yanf.util.ApiError({ name: PASSWORD_TOO_WEAK });
     }
 
-    const passwordHash = await hashPassword(password);
+    const passwordHash = await yanf.util.hashPassword(password);
     // Save new pw hash
     await this.edit(id, { passwordHash });
   }
@@ -127,7 +121,7 @@ export default class User extends YanfModel {
   async verifyUser(id) {
     const user = await this.Model.findById(id);
     if (!user)
-      throw new ApiError({ name: NO_SUCH_USER });
+      throw new yanf.util.ApiError({ name: NO_SUCH_USER });
 
     await this.edit(id, { isEmailVerified: true });
   }

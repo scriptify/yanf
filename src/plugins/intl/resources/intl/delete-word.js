@@ -1,11 +1,11 @@
 import yanf from '../../../../yanf-core';
 
-const { sendJSON } = require('../../../../yanf-core/util/app');
+const adminUserType = yanf.util.getConfigValue({ pluginName: 'intl', path: 'adminUserType' });
 
 async function deleteWordHandler(req, res) {
   const deleted = await yanf.model('IntlWord').delete(req.params.key);
 
-  sendJSON({
+  yanf.util.sendJSON({
     body: { success: !!deleted, word: deleted },
     res
   });
@@ -15,5 +15,11 @@ export default {
   handlerType: 'DEL',
   name: 'delete-word',
   handler: deleteWordHandler,
-  middleware: middlewares => [middlewares.authenticated(), middlewares.userOfType('ADM')]
+  middleware: middlewares => [
+    middlewares.login(),
+    middlewares.requireAuthentication(),
+    ...(
+      adminUserType ? [middlewares.userOfType(adminUserType)] : []
+    )
+  ]
 };

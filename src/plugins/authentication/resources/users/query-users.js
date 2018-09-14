@@ -1,13 +1,11 @@
 import yanf from '../../../../yanf-core';
 
-const { sendJSON } = require('../../../../yanf-core/util/app');
-
 async function queryUsersHandler(req, res) {
   const userType = req.user ? req.user.userType : '';
 
   const users = await yanf.model('User').get(req.params.id, { userType });
 
-  sendJSON({
+  yanf.util.sendJSON({
     body: { success: true, data: users },
     res
   });
@@ -18,5 +16,5 @@ export default {
   handler: queryUsersHandler,
   urlParams: '/:id',
   name: 'query-users',
-  middleware: middlewares => [middlewares.authenticated({ doNotFail: true })]
+  middleware: middlewares => [middlewares.login()]
 };

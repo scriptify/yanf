@@ -1,16 +1,12 @@
+import AWS from 'aws-sdk';
 import yanf from '../../../../yanf-core';
-
-const AWS = require('aws-sdk');
-
-const { getConfigValue } = require('../../../../yanf-core/util/app');
-const { errorEventEmitter } = require('../../../../yanf-core/util/error-handling');
 
 async function translateHandler(req, res) {
   const { TRANSLATION_ERROR } = yanf.getConstants();
 
-  const secretAccessKey = getConfigValue({ pluginName: 'aws', path: 'secretAccessKey', err: 'You need to specify the AWS secret access key!' });
-  const accessKeyID = getConfigValue({ pluginName: 'aws', path: 'accessKeyID', err: 'You need to specify the AWS accessKeyID!' });
-  const region = getConfigValue({ pluginName: 'aws', path: 'region' }) || 'eu-west-1';
+  const secretAccessKey = yanf.util.getConfigValue({ pluginName: 'aws', path: 'secretAccessKey', err: 'You need to specify the AWS secret access key!' });
+  const accessKeyID = yanf.util.getConfigValue({ pluginName: 'aws', path: 'accessKeyID', err: 'You need to specify the AWS accessKeyID!' });
+  const region = yanf.util.getConfigValue({ pluginName: 'aws', path: 'region' }) || 'eu-west-1';
 
   const {
     sourceLanguageCode: SourceLanguageCode,
@@ -29,7 +25,7 @@ async function translateHandler(req, res) {
     Text,
   }, (err, data) => {
     if (err) {
-      errorEventEmitter.emit('error', {
+      yanf.util.errorEventEmitter.emit('error', {
         type: TRANSLATION_ERROR, statusCode: 503, req, res
       });
     } else
@@ -41,5 +37,5 @@ export default {
   handlerType: 'ACTION',
   name: 'translate',
   handler: translateHandler,
-  middleware: middlewares => [middlewares.authenticated()]
+  middleware: middlewares => [middlewares.login(), middlewares.requireAuthentication()]
 };

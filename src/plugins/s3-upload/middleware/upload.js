@@ -1,9 +1,9 @@
-const path = require('path');
-const multer = require('multer');
-const { v4 } = require('uuid');
-const { getConfigValue } = require('../../../yanf-core/util/app');
+import path from 'path';
+import multer from 'multer';
+import { v4 } from 'uuid';
+import yanf from '../../../yanf-core';
 
-const temporaryFilePath = getConfigValue({ pluginName: 's3-upload', path: 'temporaryFilePath', err: 'Specify a path where temporary files should be saved after upload!' });
+const temporaryFilePath = yanf.util.getConfigValue({ pluginName: 's3-upload', path: 'temporaryFilePath', err: 'Specify a path where temporary files should be saved after upload!' });
 
 const uploadMiddleware = multer({
   storage: multer.diskStorage({

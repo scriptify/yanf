@@ -1,9 +1,8 @@
+import passport from 'passport';
+import { Strategy as LocalStrategy } from 'passport-local';
+import jwt from 'jsonwebtoken';
+import passportJWT from 'passport-jwt';
 import yanf from '../../yanf-core';
-
-const passport = require('passport');
-const { Strategy: LocalStrategy } = require('passport-local');
-const jwt = require('jsonwebtoken');
-const passportJWT = require('passport-jwt');
 
 const { NOT_FOUND } = yanf.getConstants();
 

@@ -1,4 +1,4 @@
-const { sendJSON } = require('../../../../yanf-core/util/app');
+import yanf from '../../../../yanf-core';
 
 async function isLoggedIn(req, res) {
   if (req.user) {
@@ -8,12 +8,12 @@ async function isLoggedIn(req, res) {
         ...user
       }
     } = req.user;
-    sendJSON({
+    yanf.util.sendJSON({
       body: { success: true, user },
       res
     });
   } else {
-    sendJSON({
+    yanf.util.sendJSON({
       body: { success: false },
       res
     });
@@ -24,5 +24,5 @@ export default {
   handlerType: 'ACTION',
   name: 'is-logged-in',
   handler: isLoggedIn,
-  middleware: middlewares => [middlewares.authenticated()]
+  middleware: middlewares => [middlewares.login()]
 };

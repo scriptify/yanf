@@ -2,10 +2,7 @@ import autopopulate from 'mongoose-autopopulate';
 import mongoose from 'mongoose';
 import yanf from '../../../yanf-core';
 
-const { regex } = require('../../../yanf-core/util/general');
-const { getConfigValue } = require('../../../yanf-core/util/app');
-
-const languages = getConfigValue({ pluginName: 'intl', path: 'availableLanguages' });
+const languages = yanf.util.getConfigValue({ pluginName: 'intl', path: 'availableLanguages' });
 
 const {
   INVALID_EMAIL, TOO_MANY_CHARACTERS, TOO_FEW_CHARACTERS, REQUIRED, INVALID_PHONENR
@@ -28,7 +25,7 @@ const UserSchema = mongoose.Schema({
     type: String,
     trim: true,
     lowercase: true,
-    match: [regex.email, INVALID_EMAIL],
+    match: [yanf.util.regex.email, INVALID_EMAIL],
     unique: true, // Used for indexing
     required: REQUIRED,
   },
@@ -36,7 +33,7 @@ const UserSchema = mongoose.Schema({
     type: String,
     trim: true,
     lowercase: true,
-    validate: [regex.email, INVALID_EMAIL],
+    validate: [yanf.util.regex.email, INVALID_EMAIL],
   }],
   passwordHash: { // Argon2 password hash
     type: String,
@@ -47,7 +44,7 @@ const UserSchema = mongoose.Schema({
   phoneNr: {
     type: String,
     match: [
-      regex.phone,
+      yanf.util.regex.phone,
       INVALID_PHONENR,
     ],
   },

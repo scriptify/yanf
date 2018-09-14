@@ -1,21 +1,19 @@
+import passport from 'passport';
 import yanf from '../../../yanf-core';
 
-const passport = require('passport');
-const { errorEventEmitter } = require('../../../yanf-core/util/error-handling');
-
-function requireAuthentication({ doNotFail = false } = {}) {
+function createLoginMiddleware({ doNotFail = false } = {}) {
   const { AUTH_ERROR } = yanf.getConstants();
   // if  do not fail is true, no error is thrown when user is not logged in
   return function login(req, res, next) {
     passport.authenticate('jwt', { session: false }, (err, user) => {
       if (err) {
-        errorEventEmitter.emit('error', ({
+        yanf.util.errorEventEmitter.emit('error', ({
           type: AUTH_ERROR, statusCode: 401, req, res
         }));
         return;
       }
       if (!user && !doNotFail) {
-        errorEventEmitter.emit('error', ({
+        yanf.util.errorEventEmitter.emit('error', ({
           type: AUTH_ERROR, statusCode: 401, req, res
         }));
         return;
@@ -28,5 +26,5 @@ function requireAuthentication({ doNotFail = false } = {}) {
 }
 
 export default {
-  fn: requireAuthentication
+  fn: createLoginMiddleware
 };

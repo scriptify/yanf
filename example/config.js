@@ -55,6 +55,7 @@ module.exports = {
       }
     },
     intl: {
+      adminUserType: 'ADM', // Admins can delete intl words
       availableLanguages: [
         {
           iso: 'de',

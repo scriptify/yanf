@@ -1,24 +1,19 @@
+import { EventEmitter } from 'events';
+
 import yanf from '..';
 
-const { sendJSON } = require('../util/app');
-const { EventEmitter } = require('events');
-
-const { isPromise } = require('./general');
-
-const { VALIDATION_ERROR, UNKNOWN_ERROR, ALREADY_EXISTS } = yanf.getConstants();
-
-function routeErrorHandler(routeHandler) {
-  // Made for express
+export function routeErrorHandler(routeHandler) {
+  const { VALIDATION_ERROR, UNKNOWN_ERROR, ALREADY_EXISTS } = yanf.getConstants();
   return async function caughtExpressRoute(req, res, next) {
     try {
       const ret = routeHandler(req, res, next);
-      if (isPromise(ret))
+      if (yanf.util.isPromise(ret))
         await ret;
     } catch (e) {
       // Errors not directly thrown by the api
       console.log('ERROR', e);
       if (e.name === 'ValidationError') {
-        sendJSON({
+        yanf.util.sendJSON({
           body: {
             error: VALIDATION_ERROR,
             payload: e.errors,
@@ -34,13 +29,13 @@ function routeErrorHandler(routeHandler) {
         const payload = {
           name: e.name || e.type || e.code || ''
         };
-        sendJSON({
+        yanf.util.sendJSON({
           body: { error: ALREADY_EXISTS, payload, success: false },
           code: 400,
           res
         });
       } else if (e.isApiError) {
-        sendJSON({
+        yanf.util.sendJSON({
           body: { error: e.name, payload: e.payload, success: false },
           code: 500,
           res
@@ -49,7 +44,7 @@ function routeErrorHandler(routeHandler) {
         const payload = {
           name: e.name || e.type || e.code || ''
         };
-        sendJSON({
+        yanf.util.sendJSON({
           body: { error: UNKNOWN_ERROR, payload, success: false },
           code: 500,
           res
@@ -60,8 +55,9 @@ function routeErrorHandler(routeHandler) {
 }
 
 // eslint-disable-next-line no-unused-vars
-function appErrorHandler(err, req, res, next) {
-  sendJSON({
+export function appErrorHandler(err, req, res, next) {
+  const { UNKNOWN_ERROR } = yanf.getConstants();
+  yanf.util.sendJSON({
     body: {
       error: UNKNOWN_ERROR,
       payload: err,
@@ -72,13 +68,13 @@ function appErrorHandler(err, req, res, next) {
   });
 }
 
-const errorEventEmitter = new EventEmitter();
+export const errorEventEmitter = new EventEmitter();
 
 errorEventEmitter.on('error', ({
   type, payload = {}, statusCode, res
 }) => {
   // Errors directly thrown by the api
-  sendJSON({
+  yanf.util.sendJSON({
     body: {
       error: type,
       payload,
@@ -89,7 +85,7 @@ errorEventEmitter.on('error', ({
   });
 });
 
-class ApiError extends Error {
+export class ApiError extends Error {
   constructor({ name, payload = {} }) {
     super(name);
     this.isApiError = true;
@@ -97,10 +93,3 @@ class ApiError extends Error {
     this.payload = payload;
   }
 }
-
-module.exports = {
-  routeErrorHandler,
-  errorEventEmitter,
-  appErrorHandler,
-  ApiError
-};

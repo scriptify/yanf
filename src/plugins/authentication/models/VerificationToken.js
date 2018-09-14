@@ -1,6 +1,4 @@
-import notifications from '../../../yanf-core/notifications/index';
 import yanf from '../../../yanf-core';
-import YanfModel from '../../../yanf-core/framework/YanfModel';
 
 const { v4 } = require('uuid');
 
@@ -8,7 +6,7 @@ const { ApiError } = require('../../../yanf-core/util/error-handling');
 
 const { NO_SUCH_TOKEN } = yanf.getConstants();
 
-export default class VerificationToken extends YanfModel {
+export default class VerificationToken extends yanf.util.YanfModel {
   async create({ userId }) {
     // Look if there is already a token for this user
     const token = await this.Model.findOne({ userId });
@@ -28,7 +26,7 @@ export default class VerificationToken extends YanfModel {
     await newToken.save();
 
     const { mainEmail: email, language: lang } = await yanf.model('User').get(userId, ['mainEmail', 'language']);
-    notifications.emit('verification', { data: { tokenValue, email, lang } });
+    yanf.util.notifications.emit('verification', { data: { tokenValue, email, lang } });
 
     return true;
   }

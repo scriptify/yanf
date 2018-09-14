@@ -1,12 +1,6 @@
+import { v4 } from 'uuid';
+import crypto from 'crypto';
 import yanf from '../../../yanf-core';
-import YanfModel from '../../../yanf-core/framework/YanfModel';
-
-const { v4 } = require('uuid');
-const crypto = require('crypto');
-
-const { ApiError } = require('../../../yanf-core/util/error-handling');
-const { getConfigValue } = require('../../../yanf-core/util/app');
-const { default: notifications } = require('../../../yanf-core/notifications');
 
 const { NO_SUCH_USER, NO_SUCH_TOKEN, INVALID_TOKEN } = yanf.getConstants();
 
@@ -14,9 +8,9 @@ function createHashFromToken(token) {
   return crypto.createHmac('sha256', token).digest('hex');
 }
 
-export default class ForgotPasswordToken extends YanfModel {
+export default class ForgotPasswordToken extends yanf.util.YanfModel {
   async generateToken(userMainEmail) {
-    const passwordRecoveryTime = getConfigValue({
+    const passwordRecoveryTime = yanf.util.getConfigValue({
       pluginName: 'authentication',
       path: 'passwordRecovery.timeout',
       err: 'You need to specify a password recovery timeout!'
@@ -24,7 +18,7 @@ export default class ForgotPasswordToken extends YanfModel {
 
     const user = await yanf.model('User').findByMainEmail(userMainEmail);
     if (!user)
-      throw new ApiError({ name: NO_SUCH_USER, payload: userMainEmail });
+      throw new yanf.util.ApiError({ name: NO_SUCH_USER, payload: userMainEmail });
 
     const { _id: userId } = user;
 
@@ -52,7 +46,7 @@ export default class ForgotPasswordToken extends YanfModel {
     await newToken.save();
 
     // Send token and validTill via email
-    notifications.emit('forgot-password', {
+    yanf.notifications.emit('forgot-password', {
       data: {
         validTill, tokenValue, email: userMainEmail, lang: user.language
       }
@@ -69,14 +63,14 @@ export default class ForgotPasswordToken extends YanfModel {
     const tokenFromDb = await this.Model.findOne({ value: hashedToken });
 
     if (!tokenFromDb)
-      throw new ApiError({ name: NO_SUCH_TOKEN });
+      throw new yanf.util.ApiError({ name: NO_SUCH_TOKEN });
 
     // Look if it is still valid
     const isTokenValid = tokenFromDb.isStillValid();
     // If not, delete it
     if (!isTokenValid) {
       await this.Model.deleteOne({ _id: tokenFromDb._id });
-      throw new ApiError({ name: INVALID_TOKEN });
+      throw new yanf.util.ApiError({ name: INVALID_TOKEN });
     }
 
     // If so, change password

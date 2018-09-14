@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
-function connectToDb(connectionUri) {
+export function connectToDb(connectionUri) {
   mongoose.connect(connectionUri);
   return new Promise((resolve, reject) => {
     const db = mongoose.connection;
@@ -8,7 +8,3 @@ function connectToDb(connectionUri) {
     db.once('open', () => resolve(db));
   });
 }
-
-module.exports = {
-  connectToDb
-};

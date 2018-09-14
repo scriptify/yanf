@@ -1,8 +1,5 @@
+import AWS from 'aws-sdk';
 import yanf from '../../yanf-core';
-
-const AWS = require('aws-sdk');
-
-const { getConfigValue } = require('../../yanf-core/util/app');
 
 export function uploadToS3({
   buffer,
@@ -10,9 +7,9 @@ export function uploadToS3({
   additionalParams,
   originalName
 }) {
-  const secretAccessKey = getConfigValue({ pluginName: 'aws', path: 'secretAccessKey', err: 'You need to specify the AWS secret access key!' });
-  const accessKeyID = getConfigValue({ pluginName: 'aws', path: 'accessKeyID', err: 'You need to specify the AWS accessKeyID!' });
-  const bucketName = getConfigValue({ pluginName: 'aws', path: 'accessKeyID', err: 'You need to specify the AWS S3 bucket name!' });
+  const secretAccessKey = yanf.util.getConfigValue({ pluginName: 'aws', path: 'secretAccessKey', err: 'You need to specify the AWS secret access key!' });
+  const accessKeyID = yanf.util.getConfigValue({ pluginName: 'aws', path: 'accessKeyID', err: 'You need to specify the AWS accessKeyID!' });
+  const bucketName = yanf.util.getConfigValue({ pluginName: 'aws', path: 'accessKeyID', err: 'You need to specify the AWS S3 bucket name!' });
 
   const s3bucket = new AWS.S3({
     accessKeyId: accessKeyID,

@@ -1,15 +1,19 @@
-const PasswordValidator = require('password-validator');
+import PasswordValidator from 'password-validator';
 
-const regex = {
+export function sendJSON({ res, code = 200, body }) {
+  return res.json(code, body);
+}
+
+export const regex = {
   email: /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
   phone: /^[+]*[(]{0,1}[0-9]{1,4}[)]{0,1}[-\s./0-9]*$/
 };
 
-function isPromise(obj) {
+export function isPromise(obj) {
   return obj && obj.then && typeof obj.then === 'function';
 }
 
-function getDefinedPropertiesFromObject({ properties, object }) {
+export function getDefinedPropertiesFromObject({ properties, object }) {
   const retObj = {};
 
   // Only pass in defined fields
@@ -28,14 +32,7 @@ pwSchema
   .not()
   .spaces();
 
-function validatePassword(password) {
+export function validatePassword(password) {
   // Needs to be strong enough
   return pwSchema.validate(password);
 }
-
-module.exports = {
-  regex,
-  isPromise,
-  validatePassword,
-  getDefinedPropertiesFromObject,
-};

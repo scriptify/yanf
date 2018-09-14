@@ -14,11 +14,13 @@
 - ~~Create central ModelRegistry~~
 - ~~Routes should use the ModelRegistry~~
 - ~~Make user model extendable~~
-- Refactor notification system
-- Provide simple e-mail template fillable with content
+- ~~Authentication plugin: Fields which are included/excluded depend on user type~~
 - ~~Static lang files should be provided dynamically~~
 - ~~Create working test~~
 - Use ESM everywhere
 - Make it a monorepo
-- Try to integrate it into the REAL backend
+- Create another test
+- Start documentation
+- Refactor notification system
+- Provide simple e-mail template fillable with content
 - Frontend bindings

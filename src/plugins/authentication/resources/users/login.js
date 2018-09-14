@@ -1,18 +1,14 @@
+import passport from 'passport';
 import yanf from '../../../../yanf-core';
 
-const { sendJSON } = require('../../../../yanf-core/util/app');
-
-const passport = require('passport');
-
-const { getJWT } = require('../../setup-passport');
-const { errorEventEmitter } = require('../../../../yanf-core/util/error-handling');
+import { getJWT } from '../../setup-passport';
 
 const { AUTH_ERROR } = yanf.getConstants();
 
 async function login(req, res, next) {
   passport.authenticate('local', (err, user) => {
     if (err) {
-      errorEventEmitter.emit('error', {
+      yanf.util.errorEventEmitter.emit('error', {
         type: AUTH_ERROR, statusCode: 401, payload: err, req, res
       });
       return;
@@ -20,7 +16,7 @@ async function login(req, res, next) {
 
     req.login(user, (loginErr) => {
       if (loginErr) {
-        errorEventEmitter.emit('error', {
+        yanf.util.errorEventEmitter.emit('error', {
           type: AUTH_ERROR, statusCode: 401, payload: loginErr, req, res
         });
         return;
@@ -32,7 +28,7 @@ async function login(req, res, next) {
           ...retUserObj
         }
       } = user;
-      sendJSON({
+      yanf.util.sendJSON({
         body: { success: true, token: getJWT(user.id), user: retUserObj },
         res
       });

@@ -1,8 +1,6 @@
 import { getConfigValue } from '../../../yanf-core/util/app';
 import yanf from '../../../yanf-core';
 
-const { errorEventEmitter } = require('../../../yanf-core/util/error-handling');
-
 function getUserGroupsOfUserType({ userGroup, userTypes = [], groups }) {
   // If a user is an ADM, she's automatically a RE + RC, so return [RE, RC, ADM]
   const group = groups.find(g => g.name === userGroup.name);
@@ -26,10 +24,14 @@ function createRequireUserTypeMiddleware(userType) {
   const { WRONG_USER_TYPE } = yanf.getConstants();
 
   return function requireUserType(req, res, next) {
+    if (!userGroups) {
+      next();
+      return;
+    }
     const group = userGroups.find(g => g.name === req.user[field]);
 
     if (!group) {
-      errorEventEmitter.emit('error', {
+      yanf.util.errorEventEmitter.emit('error', {
         type: WRONG_USER_TYPE, statusCode: 400, req, res
       });
       return;
@@ -37,7 +39,7 @@ function createRequireUserTypeMiddleware(userType) {
 
     const groupsIn = getUserGroupsOfUserType({ userGroup: group, groups: userGroups });
     if (!groupsIn.includes(userType)) {
-      errorEventEmitter.emit('error', {
+      yanf.util.errorEventEmitter.emit('error', {
         type: WRONG_USER_TYPE, statusCode: 400, req, res
       });
       return;

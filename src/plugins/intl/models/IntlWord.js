@@ -1,6 +1,6 @@
-import YanfModel from '../../../yanf-core/framework/YanfModel';
+import yanf from '../../../yanf-core';
 
-export default class IntlWord extends YanfModel {
+export default class IntlWord extends yanf.util.YanfModel {
   async create({ key, languages }) {
     const existingWord = await this.Model.findOne({ key });
     if (existingWord) {

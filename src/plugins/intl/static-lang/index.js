@@ -2,9 +2,7 @@
 /* eslint-disable global-require */
 import yanf from '../../../yanf-core';
 
-const { getConfigValue } = require('../../../yanf-core/util/app');
-
-const availableLanguages = getConfigValue({ pluginName: 'intl', path: 'availableLanguages' });
+const availableLanguages = yanf.util.getConfigValue({ pluginName: 'intl', path: 'availableLanguages' });
 const langConstants = availableLanguages
   .map(lang => ({ constants: require(lang.file), key: lang.iso }));
 

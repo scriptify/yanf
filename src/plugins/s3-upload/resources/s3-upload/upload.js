@@ -1,23 +1,17 @@
+import { v4 } from 'uuid';
+import fs from 'fs';
+import { promisify } from 'util';
+import sharp from 'sharp';
 import yanf from '../../../../yanf-core';
-
-const { v4 } = require('uuid');
-
-const fs = require('fs');
-const { promisify } = require('util');
-const sharp = require('sharp');
-
-const { sendJSON, getConfigValue } = require('../../../../yanf-core/util/app');
-const { errorEventEmitter } = require('../../../../yanf-core/util/error-handling');
-
-const { uploadToS3 } = require('../../upload-s3');
+import { uploadToS3 } from '../../upload-s3';
 
 const { UPLOAD_ERROR, FILE_TOO_BIG } = yanf.getConstants();
 
 const unlinkAsync = promisify(fs.unlink);
 const readFileAsync = promisify(fs.readFile);
 
-const MAX_FILE_SIZE_MB = getConfigValue({ pluginName: 's3-upload', path: 'maxFileSize' }) || 2;
-const FILE_TYPES = getConfigValue({ pluginName: 's3-upload', path: 'fileTypes', err: 'You need to specify the "fileTypes" field for s3-upload!' });
+const MAX_FILE_SIZE_MB = yanf.util.getConfigValue({ pluginName: 's3-upload', path: 'maxFileSize' }) || 2;
+const FILE_TYPES = yanf.util.getConfigValue({ pluginName: 's3-upload', path: 'fileTypes', err: 'You need to specify the "fileTypes" field for s3-upload!' });
 
 function bToMb(b) {
   return b * (10 ** -6);
@@ -25,7 +19,7 @@ function bToMb(b) {
 
 async function upload(req, res) {
   if (!req.files) {
-    errorEventEmitter.emit('error', {
+    yanf.util.errorEventEmitter.emit('error', {
       type: UPLOAD_ERROR, statusCode: 400, req, res
     });
     return;
@@ -36,14 +30,14 @@ async function upload(req, res) {
   const file = req.files[fileType];
 
   if (!fileType || !file) {
-    errorEventEmitter.emit('error', {
+    yanf.util.errorEventEmitter.emit('error', {
       type: UPLOAD_ERROR, statusCode: 400, req, res
     });
     return;
   }
 
   if (bToMb(file.size) >= MAX_FILE_SIZE_MB) {
-    errorEventEmitter.emit('error', {
+    yanf.util.errorEventEmitter.emit('error', {
       type: FILE_TOO_BIG, statusCode: 400, req, res
     });
     return;
@@ -83,7 +77,7 @@ async function upload(req, res) {
         // console.log('Couldn\'t delete temp image.');
       }
 
-      sendJSON({
+      yanf.util.sendJSON({
         body: { success: true, ...uploadedFile },
         res
       });
@@ -109,7 +103,7 @@ async function upload(req, res) {
       // console.log('Couldn\'t delete temp image.');
     }
     // Document upload
-    sendJSON({
+    yanf.util.sendJSON({
       body: { success: true, ...uploadedFile },
       res
     });
@@ -118,7 +112,7 @@ async function upload(req, res) {
 
   // Delete file
   await unlinkAsync(file.path);
-  errorEventEmitter.emit('error', {
+  yanf.util.errorEventEmitter.emit('error', {
     type: UPLOAD_ERROR, statusCode: 400, req, res
   });
 }
@@ -127,5 +121,5 @@ export default {
   handlerType: 'ACTION',
   name: 'upload',
   handler: upload,
-  middleware: middlewares => [middlewares.authenticated()]
+  middleware: middlewares => [middlewares.login(), middlewares.requireAuthentication()]
 };

@@ -10,6 +10,17 @@ import corsMiddleware from 'restify-cors-middleware';
 import mongoose from 'mongoose';
 import setupMongooseJSONSchema from 'mongoose-schema-jsonschema';
 
+import * as appUtils from './util/app';
+import * as configUtils from './util/config';
+import * as cryptoUtils from './util/cryptography';
+import * as dbUtils from './util/db';
+import * as errorHandlingUtils from './util/error-handling';
+import * as generalUtils from './util/general';
+
+import notifications from './notifications';
+
+import YanfModel from './framework/YanfModel';
+
 process.on('uncaughtException', (err) => {
   console.error('Uncaught exception: ', err);
 });
@@ -30,6 +41,16 @@ class YanfApp {
   constants;
   models = {};
   app;
+  util = {
+    ...appUtils,
+    ...configUtils,
+    ...cryptoUtils,
+    ...dbUtils,
+    ...errorHandlingUtils,
+    ...generalUtils,
+    YanfModel
+  };
+  notifications = notifications;
 
   getConfig() {
     if (!this.config)

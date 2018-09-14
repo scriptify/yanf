@@ -1,10 +1,7 @@
+import mongoose from 'mongoose';
 import yanf from '../../../yanf-core';
 
-const mongoose = require('mongoose');
-
-const { getConfigValue } = require('../../../yanf-core/util/app');
-
-const languages = getConfigValue({ pluginName: 'intl', path: 'availableLanguages' });
+const languages = yanf.util.getConfigValue({ pluginName: 'intl', path: 'availableLanguages' });
 
 const { TOO_MANY_CHARACTERS, REQUIRED } = yanf.getConstants();
 

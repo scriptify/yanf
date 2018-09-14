@@ -1,11 +1,11 @@
-const { sendJSON } = require('../../../../yanf-core/util/app');
+import yanf from '../../../../yanf-core';
 
-const getValue = require('../../static-lang');
+import getValue from '../../static-lang';
 
 async function getWordsHandler(req, res) {
   const { key, lang } = req.params;
   const data = await getValue({ key, lang });
-  sendJSON({
+  yanf.util.sendJSON({
     body: { success: true, data },
     res
   });

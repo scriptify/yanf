@@ -1,8 +1,6 @@
 import yanf from '../../../../yanf-core';
 
-const { sendJSON } = require('../../../../yanf-core/util/app');
-
-const { getJWT } = require('../../setup-passport');
+import { getJWT } from '../../setup-passport';
 
 async function register(req, res) {
   const data = req.params;
@@ -14,7 +12,7 @@ async function register(req, res) {
       ...retUserObj
     }
   } = newUser;
-  sendJSON({
+  yanf.util.sendJSON({
     body: { success: true, token: getJWT(newUser._id), user: retUserObj },
     res
   });

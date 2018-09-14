@@ -1,6 +1,5 @@
+import mongoose from 'mongoose';
 import yanf from '../../../yanf-core';
-
-const mongoose = require('mongoose');
 
 const { REQUIRED } = yanf.getConstants();
 
