@@ -17,9 +17,7 @@
 - ~~Authentication plugin: Fields which are included/excluded depend on user type~~
 - ~~Static lang files should be provided dynamically~~
 - ~~Create working test~~
-- Use ESM everywhere
-- Make it a monorepo
-- Create another test
+- ~~Make it a monorepo~~
 - Start documentation
 - Refactor notification system
 - Provide simple e-mail template fillable with content

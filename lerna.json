@@ -4,5 +4,12 @@
     "src/plugins/*",
     "src/yanf-core"
   ],
-  "version": "0.0.1"
+  "version": "0.0.1",
+  "command": {
+    "publish": {
+      "ignoreChanges": [
+        "example/**"
+      ]
+    }
+  }
 }
