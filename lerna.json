@@ -1,8 +1,8 @@
 {
   "packages": [
+    "example",
     "src/plugins/*",
-    "src/yanf-core",
-    "example"
+    "src/yanf-core"
   ],
   "version": "0.0.1"
 }
