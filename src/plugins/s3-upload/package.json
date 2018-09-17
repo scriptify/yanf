@@ -1,6 +1,6 @@
 {
   "name": "yanf-s3-upload",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -15,7 +15,7 @@
     "multer": "^1.3.1",
     "sharp": "^0.20.8",
     "uuid": "^3.3.2",
-    "yanf-core": "^0.0.2"
+    "yanf-core": "^0.0.3"
   },
   "gitHead": "8bc87c473f74e55964b23e1892603790e1f5326f"
 }
