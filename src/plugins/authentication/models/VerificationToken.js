@@ -2,8 +2,6 @@ const yanf = require('yanf-core');
 
 const { v4 } = require('uuid');
 
-const { ApiError } = require('../../../yanf-core/util/error-handling');
-
 const { NO_SUCH_TOKEN } = yanf.getConstants();
 
 module.exports = class VerificationToken extends yanf.util.YanfModel {
@@ -34,7 +32,7 @@ module.exports = class VerificationToken extends yanf.util.YanfModel {
   async verifyEmail(tokenValue) {
     const token = await this.Model.findOne({ value: tokenValue });
     if (!token)
-      throw new ApiError({ name: NO_SUCH_TOKEN });
+      throw new yanf.util.ApiError({ name: NO_SUCH_TOKEN });
 
 
     const { userId } = token;

@@ -1,7 +1,7 @@
-const { sendJSON } = require('../../../src/yanf-core/util/app');
+const yanf = require('yanf-core');
 
 async function getUsernameHandler(req, res) {
-  sendJSON({
+  yanf.util.sendJSON({
     res,
     body: { username: 'Franz Josef' }
   });

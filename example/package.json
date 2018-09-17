@@ -11,5 +11,6 @@
   "license": "ISC",
   "dependencies": {
     "yanf-core": "^0.0.2"
-  }
+  },
+  "gitHead": "8bc87c473f74e55964b23e1892603790e1f5326f"
 }
