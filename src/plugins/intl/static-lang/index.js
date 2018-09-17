@@ -1,6 +1,6 @@
 /* eslint-disable import/no-dynamic-require */
 /* eslint-disable global-require */
-const yanf = require('@yanf/core');
+const yanf = require('yanf-core');
 
 const availableLanguages = yanf.util.getConfigValue({ pluginName: 'intl', path: 'availableLanguages' });
 const langConstants = availableLanguages

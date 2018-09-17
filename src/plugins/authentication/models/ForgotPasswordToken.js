@@ -1,6 +1,6 @@
 const { v4 } = require('uuid');
 const crypto = require('crypto');
-const yanf = require('@yanf/core');
+const yanf = require('yanf-core');
 
 const { NO_SUCH_USER, NO_SUCH_TOKEN, INVALID_TOKEN } = yanf.getConstants();
 

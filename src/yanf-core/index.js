@@ -32,10 +32,10 @@ process.on('unhandledRejection', (reason, p) => {
 class YanfApp {
   constructor() {
     this.defaultPlugins = [
-      '@yanf/authentication',
-      '@yanf/error-constants',
-      '@yanf/internationalization',
-      '@yanf/s3-upload'
+      'yanf-authentication',
+      'yanf-error-constants',
+      'yanf-internationalization',
+      'yanf-s3-upload'
     ];
 
     this.config = null;

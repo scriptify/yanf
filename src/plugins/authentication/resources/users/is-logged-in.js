@@ -1,4 +1,4 @@
-const yanf = require('@yanf/core');
+const yanf = require('yanf-core');
 
 async function isLoggedIn(req, res) {
   if (req.user) {

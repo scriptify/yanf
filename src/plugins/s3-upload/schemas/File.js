@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const yanf = require('@yanf/core');
+const yanf = require('yanf-core');
 
 const { REQUIRED } = yanf.getConstants();
 

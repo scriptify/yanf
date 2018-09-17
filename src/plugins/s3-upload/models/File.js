@@ -1,4 +1,4 @@
-const yanf = require('@yanf/core');
+const yanf = require('yanf-core');
 
 module.exports = class File extends yanf.util.YanfModel {
   create({ url, name }) {

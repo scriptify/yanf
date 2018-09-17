@@ -1,6 +1,6 @@
 const autopopulate = require('mongoose-autopopulate');
 const mongoose = require('mongoose');
-const yanf = require('@yanf/core');
+const yanf = require('yanf-core');
 
 const languages = yanf.util.getConfigValue({ pluginName: 'intl', path: 'availableLanguages' });
 

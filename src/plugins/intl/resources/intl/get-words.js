@@ -1,4 +1,4 @@
-const yanf = require('@yanf/core');
+const yanf = require('yanf-core');
 
 const getValue = require('../../static-lang');
 

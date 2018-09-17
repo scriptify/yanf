@@ -1,5 +1,5 @@
 {
-  "name": "@yanf/core",
+  "name": "yanf-core",
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
@@ -9,10 +9,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@yanf/authentication": "^0.0.1",
-    "@yanf/error-constants": "^0.0.1",
-    "@yanf/internationalization": "^0.0.1",
-    "@yanf/s3-upload": "^0.0.1",
+    "yanf-authentication": "^0.0.1",
+    "yanf-error-constants": "^0.0.1",
+    "yanf-internationalization": "^0.0.1",
+    "yanf-s3-upload": "^0.0.1",
     "argon2": "^0.19.3",
     "module-alias": "^2.1.0",
     "mongoose": "^5.2.14",

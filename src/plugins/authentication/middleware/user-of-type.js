@@ -1,4 +1,4 @@
-const yanf = require('@yanf/core');
+const yanf = require('yanf-core');
 
 function getUserGroupsOfUserType({ userGroup, userTypes = [], groups }) {
   // If a user is an ADM, she's automatically a RE + RC, so return [RE, RC, ADM]

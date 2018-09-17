@@ -1,4 +1,4 @@
-const yanf = require('@yanf/core');
+const yanf = require('yanf-core');
 
 async function createWordHandler(req, res) {
   const data = req.params;

@@ -1,4 +1,4 @@
-const yanf = require('@yanf/core');
+const yanf = require('yanf-core');
 
 const { NOT_ENOUGH_PARAMETERS } = yanf.getConstants();
 

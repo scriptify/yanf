@@ -1,5 +1,5 @@
 {
-  "name": "@yanf/error-constants",
+  "name": "yanf-error-constants",
   "version": "0.0.1",
   "description": "",
   "main": "index.js",
