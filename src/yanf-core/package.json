@@ -1,6 +1,6 @@
 {
   "name": "yanf-core",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -16,10 +16,10 @@
     "password-validator": "^4.1.1",
     "restify": "^7.2.1",
     "restify-cors-middleware": "^1.1.1",
-    "yanf-authentication": "^0.0.3",
-    "yanf-error-constants": "^0.0.3",
-    "yanf-internationalization": "^0.0.3",
-    "yanf-s3-upload": "^0.0.3"
+    "yanf-authentication": "^0.1.0",
+    "yanf-error-constants": "^0.1.0",
+    "yanf-internationalization": "^0.1.0",
+    "yanf-s3-upload": "^0.1.0"
   },
   "gitHead": "892c1c46e289927c5b48dcf5a803b26969251c77"
 }
