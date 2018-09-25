@@ -6,15 +6,12 @@ const util = require('util');
 const fs = require('fs');
 const path = require('path');
 
-const yanf = require('..');
-
 const timeParser = require('../util/parse-timerange');
 
 const readdir = util.promisify(fs.readdir);
 const lstat = util.promisify(fs.lstat);
 
 let allMiddlewares = [];
-let apiPrefix;
 
 function toCamelCase(str) {
   return str.replace(/-([a-z])/g, (m, w) => w.toUpperCase());
@@ -34,11 +31,6 @@ function objToArray(obj, { spread = true } = {}) {
 
 function getFileName(absolutePath) {
   return path.basename(absolutePath).split('.')[0];
-}
-
-function getFolderName(pathToUse) {
-  const fullPath = path.dirname(pathToUse);
-  return fullPath.slice(fullPath.lastIndexOf('/') + 1, fullPath.length);
 }
 
 function arrayToObj(arr) {
@@ -81,57 +73,6 @@ async function getMiddlewares(middlwarePath) {
   return arrayToObj(retArr);
 }
 
-async function getResources(resourcePaths, middlewaresArray = allMiddlewares) {
-  const middlewares = arrayToObj(middlewaresArray);
-  if (!resourcePaths)
-    return [];
-  const resources = objToArray(await requireFromDirStructure(resourcePaths))
-    .map(resource => ({
-      ...resource,
-      middleware: typeof resource.middleware === 'function' ? resource.middleware(middlewares) : []
-    }));
-  // Map resources to route paths and reduce them to one object per path
-  const extractedRoutes = resources.reduce((acc, resource) => {
-    const routeName = getFolderName(resource.key);
-    const existingRoute = acc.find(route => route.name === routeName);
-    if (!existingRoute) {
-      return [
-        ...acc,
-        {
-          name: routeName,
-          actions: [resource]
-        }
-      ];
-    }
-    return acc.map((route) => {
-      if (route.name === routeName) {
-        return {
-          ...route,
-          actions: route.actions.concat([resource])
-        };
-      }
-      return route;
-    });
-  }, []);
-  return extractedRoutes;
-}
-
-function createRoute({
-  app, method, handler, name, middleware = [], urlParams = ''
-}) {
-  const { routeErrorHandler } = require('../util/error-handling');
-  const url = `/${apiPrefix}/${name}${urlParams}`;
-  console.log(`Bootstrap route: [${method.toUpperCase()}] ${url}`);
-  app[method](url, middleware, routeErrorHandler(handler));
-
-  if (urlParams.includes('/')) {
-    const newUrlParams = urlParams.slice(0, urlParams.lastIndexOf('/'));
-    createRoute({
-      app, method, handler, name, middleware, urlParams: newUrlParams
-    });
-  }
-}
-
 async function setupAppLoops(loopsPath) {
   if (!loopsPath)
     return;
@@ -143,40 +84,6 @@ async function setupAppLoops(loopsPath) {
 
 async function addMiddleware(middlewarePath) {
   allMiddlewares = allMiddlewares.concat(await getMiddlewares(middlewarePath));
-}
-
-async function setupResources(resourcePath, app) {
-  apiPrefix = yanf.getConfig().apiPrefix || 'api';
-  const resources = await getResources(resourcePath);
-
-  resources.forEach((resource) => {
-    const { name, actions: resourceActions } = resource;
-
-    resourceActions.forEach((resourceAction) => {
-      const {
-        handler,
-        middleware = [],
-        urlParams = '',
-        handlerType,
-        name: actionName
-      } = resourceAction;
-      const actionType = handlerType.toLowerCase();
-      if (typeof app[actionType] === 'function') {
-        createRoute({
-          app, method: actionType, handler, name: `${name}`, middleware, urlParams
-        });
-      } else if (actionType === 'action') {
-        createRoute({
-          app,
-          method: 'post',
-          name: `${name}/actions/${actionName}`,
-          handler,
-          middleware
-        });
-      } else
-        console.warn(`Invalid action type ${actionType} for route ${name}`);
-    });
-  });
 }
 
 async function createModels({ schemasPath, modelsPath }) {
@@ -203,6 +110,5 @@ async function createModels({ schemasPath, modelsPath }) {
 module.exports = {
   setupAppLoops,
   addMiddleware,
-  setupResources,
   createModels
 };

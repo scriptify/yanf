@@ -2,11 +2,6 @@
 /* eslint-disable global-require */
 const moduleAlias = require('module-alias');
 
-const path = require('path');
-
-const restify = require('restify');
-const corsMiddleware = require('restify-cors-middleware');
-
 const mongoose = require('mongoose');
 const setupMongooseJSONSchema = require('mongoose-schema-jsonschema');
 
@@ -71,9 +66,9 @@ class YanfApp {
     return this.models[name];
   }
 
-  async startApp({ configPath, ...config }) {
+  async setup({ configPath, app = { use: () => {} }, ...config }) {
     const {
-      setupAppLoops, setupResources, addMiddleware, createModels
+      setupAppLoops, addMiddleware, createModels
     } = require('./framework');
     const createConfig = require('./util/config');
 
@@ -105,22 +100,6 @@ class YanfApp {
         this.models[model.name] = model;
       });
     }
-
-    const app = restify.createServer();
-
-    if (this.config.cors === undefined || this.config.cors === true) {
-      // Enable CORS
-      const cors = corsMiddleware({
-        origins: ['*'],
-        allowHeaders: ['Access-Control-Allow-Origin', 'Authorization']
-      });
-      app.pre(cors.preflight);
-      app.use(cors.actual);
-    }
-
-
-    // Enable Posted JSON data
-    app.use(restify.plugins.bodyParser({ mapParams: true }));
 
     // Setup plugins here
     const pluginsToUse = this.config.includes && Array.isArray(this.config.includes) ?
@@ -177,8 +156,6 @@ class YanfApp {
         plugin.hooks.onBeforeInitialize(app);
       if (plugin.loops)
         await setupAppLoops(plugin.loops);
-      if (plugin.resources)
-        await setupResources(plugin.resources, app);
 
       if (plugin.hooks && plugin.hooks.onInitialized && typeof plugin.hooks.onInitialized === 'function')
         plugin.hooks.onInitialized(app);
@@ -186,32 +163,14 @@ class YanfApp {
 
     await Promise.all(waitForPluginSetup);
 
-    // Setup custom resources (most constant part ofthe whole application);
     // app loops are also setup here
     if (this.config.paths.middleware)
       await addMiddleware(this.config.paths.middleware);
-    if (this.config.paths.resources)
-      await setupResources(this.config.paths.resources, app);
     if (this.config.paths.loops)
       await setupAppLoops(this.config.paths.loops);
 
     const { appErrorHandler } = require('./util/error-handling');
     app.use(appErrorHandler);
-
-    if (this.config.serveStatic) {
-      app.get('/*', (req, res, next) => {
-        if (req.url.indexOf('.') === -1)
-          req.url = '/index.html';
-
-        const handler = restify.plugins.serveStatic({
-          directory: path.resolve(this.config.serveStatic)
-        });
-
-        handler(req, res, next);
-      });
-    }
-
-    app.listen(this.config.port, () => console.log(`Server listening on ${this.config.port}`));
 
     this.app = app;
   }

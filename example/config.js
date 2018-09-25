@@ -3,14 +3,13 @@ const path = require('path');
 module.exports = {
   include: [], // Plugins to include (module/path)
   exclude: [], // Default plugins to exclude (module/path)
-  apiPrefix: 'cats-api',
   aliases: {
     '@shared': path.join(__dirname, './shared')
   },
   mongo: {
     connectionUri: {
-      dev: 'mongodb://app:yanfcouldbecool2018@ds249992.mlab.com:49992/yanf-test',
-      prod: 'mongodb://app:yanfcouldbecool2018@ds249992.mlab.com:49992/yanf-test'
+      dev: '',
+      prod: ''
     }
   },
   port: {
@@ -18,7 +17,6 @@ module.exports = {
     prod: 8080
   },
   paths: {
-    resources: path.join(__dirname, './resources'),
     middleware: path.join(__dirname, './middleware'),
     schemas: path.join(__dirname, './schemas'),
     models: path.join(__dirname, './models'),
