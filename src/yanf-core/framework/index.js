@@ -11,8 +11,6 @@ const timeParser = require('../util/parse-timerange');
 const readdir = util.promisify(fs.readdir);
 const lstat = util.promisify(fs.lstat);
 
-let allMiddlewares = [];
-
 function toCamelCase(str) {
   return str.replace(/-([a-z])/g, (m, w) => w.toUpperCase());
 }
@@ -82,10 +80,6 @@ async function setupAppLoops(loopsPath) {
   });
 }
 
-async function addMiddleware(middlewarePath) {
-  allMiddlewares = allMiddlewares.concat(await getMiddlewares(middlewarePath));
-}
-
 async function createModels({ schemasPath, modelsPath }) {
   const models = objToArray(await requireFromDirStructure(modelsPath), { spread: false });
   const schemas = objToArray(await requireFromDirStructure(schemasPath), { spread: false });
@@ -109,6 +103,6 @@ async function createModels({ schemasPath, modelsPath }) {
 
 module.exports = {
   setupAppLoops,
-  addMiddleware,
+  getMiddlewares,
   createModels
 };

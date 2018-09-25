@@ -3,7 +3,7 @@ const yanf = require('yanf-core');
 
 async function main() {
   await yanf.setup({ configPath: path.join(__dirname, './config.js') });
-  console.log(yanf.model('User'));
+  console.log(yanf.middlewares);
 }
 
 main();

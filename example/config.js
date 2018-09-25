@@ -8,8 +8,8 @@ module.exports = {
   },
   mongo: {
     connectionUri: {
-      dev: '',
-      prod: ''
+      dev: process.env.MONGO_DB_URI,
+      prod: process.env.MONGO_DB_URI
     }
   },
   port: {

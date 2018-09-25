@@ -1,6 +1,7 @@
 /* eslint-disable import/no-dynamic-require */
 /* eslint-disable global-require */
 const moduleAlias = require('module-alias');
+const dotEnv = require('dotenv');
 
 const mongoose = require('mongoose');
 const setupMongooseJSONSchema = require('mongoose-schema-jsonschema');
@@ -23,6 +24,8 @@ process.on('uncaughtException', (err) => {
 process.on('unhandledRejection', (reason, p) => {
   console.error('Unhandled rejection: ', reason, p);
 });
+
+dotEnv.config();
 
 class YanfApp {
   constructor() {
@@ -47,6 +50,7 @@ class YanfApp {
       YanfModel
     };
     this.notifications = notifications;
+    this.middlewares = [];
   }
 
   getConfig() {
@@ -68,7 +72,7 @@ class YanfApp {
 
   async setup({ configPath, app = { use: () => {} }, ...config }) {
     const {
-      setupAppLoops, addMiddleware, createModels
+      setupAppLoops, getMiddlewares, createModels
     } = require('./framework');
     const createConfig = require('./util/config');
 
@@ -148,7 +152,7 @@ class YanfApp {
     /* eslint-disable no-restricted-syntax */
     /* eslint-disable no-await-in-loop */
     for (const middlewarPlugin of allMiddlewarePlugins) // Needs to be setup sequentally
-      await addMiddleware(middlewarPlugin);
+      this.middlewares = this.middlewares.concat(await getMiddlewares(middlewarPlugin));
 
     const waitForPluginSetup = allPlugins.map(async (plugin) => {
       // Also fire according plugin hooks
@@ -164,8 +168,11 @@ class YanfApp {
     await Promise.all(waitForPluginSetup);
 
     // app loops are also setup here
-    if (this.config.paths.middleware)
-      await addMiddleware(this.config.paths.middleware);
+    if (this.config.paths.middleware) {
+      this.middlewares = this.middlewares.concat(
+        await getMiddlewares(this.config.paths.middleware)
+      );
+    }
     if (this.config.paths.loops)
       await setupAppLoops(this.config.paths.loops);
 
