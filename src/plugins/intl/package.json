@@ -1,6 +1,6 @@
 {
   "name": "yanf-internationalization",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -12,7 +12,7 @@
   "dependencies": {
     "aws-sdk": "^2.315.0",
     "mongoose": "^5.2.14",
-    "yanf-core": "^0.1.0"
+    "yanf-core": "^0.2.0"
   },
   "gitHead": "f9a56a5fa721e0c6bac8e4d8f5948bae891b1f51"
 }

@@ -1,6 +1,6 @@
 {
   "name": "yanf-authentication",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -17,7 +17,7 @@
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
     "uuid": "^3.3.2",
-    "yanf-core": "^0.1.0"
+    "yanf-core": "^0.2.0"
   },
   "gitHead": "f9a56a5fa721e0c6bac8e4d8f5948bae891b1f51"
 }

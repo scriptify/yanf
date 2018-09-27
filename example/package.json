@@ -1,6 +1,6 @@
 {
   "name": "example",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "yanf-core": "^0.1.0"
+    "yanf-core": "^0.2.0"
   },
   "gitHead": "f9a56a5fa721e0c6bac8e4d8f5948bae891b1f51"
 }
