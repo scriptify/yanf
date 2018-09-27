@@ -10,6 +10,7 @@
   "license": "ISC",
   "dependencies": {
     "argon2": "^0.19.3",
+    "dotenv": "^6.0.0",
     "module-alias": "^2.1.0",
     "mongoose": "^5.2.14",
     "mongoose-schema-jsonschema": "^1.1.15",

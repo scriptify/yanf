@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "lerna bootstrap && cross-env ANF_MODE=development nodemon --inspect",
-    "lint": "eslint example --fix && eslint src --fix",
+    "lint": "eslint example/**/*.js --fix && eslint src/**/*.js --fix",
     "count-lines": "cloc . --exclude-dir=node_modules,.git,build --exclude-ext=json"
   },
   "nodemonConfig": {
@@ -28,5 +28,9 @@
     "eslint-plugin-jsx-a11y": "^6.0.2",
     "lerna": "^3.3.2",
     "nodemon": "^1.17.5"
+  },
+  "dependencies": {
+    "graphql": "^14.0.2",
+    "mongoose-schema-to-graphql": "^2.7.2"
   }
 }

@@ -5,6 +5,9 @@ const dotEnv = require('dotenv');
 
 const mongoose = require('mongoose');
 const setupMongooseJSONSchema = require('mongoose-schema-jsonschema');
+const { printType } = require('graphql');
+
+const createGraphQLType = require('mongoose-schema-to-graphql');
 
 const appUtils = require('./util/app');
 const configUtils = require('./util/config');
@@ -50,7 +53,7 @@ class YanfApp {
       YanfModel
     };
     this.notifications = notifications;
-    this.middlewares = [];
+    this.middlewares = {};
   }
 
   getConfig() {
@@ -152,7 +155,7 @@ class YanfApp {
     /* eslint-disable no-restricted-syntax */
     /* eslint-disable no-await-in-loop */
     for (const middlewarPlugin of allMiddlewarePlugins) // Needs to be setup sequentally
-      this.middlewares = this.middlewares.concat(await getMiddlewares(middlewarPlugin));
+      this.middlewares = { ...await getMiddlewares(middlewarPlugin), ...this.middlewares };
 
     const waitForPluginSetup = allPlugins.map(async (plugin) => {
       // Also fire according plugin hooks
@@ -169,9 +172,10 @@ class YanfApp {
 
     // app loops are also setup here
     if (this.config.paths.middleware) {
-      this.middlewares = this.middlewares.concat(
-        await getMiddlewares(this.config.paths.middleware)
-      );
+      this.middlewares = {
+        ...await getMiddlewares(this.config.paths.middleware),
+        ...this.middlewares
+      };
     }
     if (this.config.paths.loops)
       await setupAppLoops(this.config.paths.loops);
@@ -180,6 +184,21 @@ class YanfApp {
     app.use(appErrorHandler);
 
     this.app = app;
+  }
+
+  mongooseToGraphQL({ model, name, description }) {
+    const nameToUse = name || model;
+    const descriptionToUse = description || `${nameToUse} GraphQL Schema derived from mongoose schema.`;
+    const yanfModel = this.model(model);
+    if (!yanfModel)
+      throw new Error(`Can't find yanf model with name ${model}.`);
+    const { schema } = yanfModel;
+    return printType(createGraphQLType({
+      schema,
+      name: nameToUse,
+      description: descriptionToUse,
+      class: 'GraphQLObjectType',
+    }));
   }
 }
 
